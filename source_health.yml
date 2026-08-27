@@ -1,0 +1,158 @@
+id: source_health
+namespace: kaiwaehner.blog
+
+description: |
+  Weekly health check across every source in config.json, including the parked
+  ones that blog_monitor.py no longer fetches.
+
+  WHY THIS EXISTS. The digest mail reports a failing source once, then at most
+  every error_notify_days. After eighteen identical lines nobody acts on the
+  nineteenth. Two sources, EnvisionSCADA and ServiceNow, were failing for weeks
+  and additionally hung the whole run, which nobody noticed because the mail
+  still arrived, just later. A line in an email is not a decision. A case is.
+
+  HOW IT DIFFERS FROM THE DIGEST. check_sources.py probes each source strictly
+  sequentially with a hard per-source budget, so a hung source is measured
+  instead of blocking everything behind it. It never writes state and never
+  sends mail.
+
+  CASES. A failing sweep opens a case through CreateCase, and every later
+  sweep attaches to that same case rather than opening a new one. The
+  deduplication key is namespace + flow id + task id, so the case accumulates
+  weeks of linked executions until somebody resolves it.
+
+  This flow is also attached to the case as its own Case Action, so a one-click
+  re-check answers the question the case has: what is still broken, and has a
+  parked source come back? That works because both inputs here have defaults.
+  Case actions in rc10 fire immediately with no execute form, so any flow with
+  a required input fails with 422 Missing required input.
+
+labels:
+  owner: kai
+  purpose: source-health
+
+concurrency:
+  limit: 1
+  behavior: CANCEL
+
+inputs:
+  - id: work_dir
+    type: STRING
+    defaults: /home/kestra/blog_monitor_kestra
+    description: |
+      Runs against the parallel copy, not production. The check is read-only,
+      but there is no reason to point it at the live directory.
+
+  - id: case_assignee
+    type: STRING
+    defaults: you@example.com
+    description: |
+      Who owns the case. Must be a real user in this Kestra instance, otherwise
+      CreateCase rejects it: assignment needs at least one user or group.
+
+  - id: per_source_timeout
+    type: INT
+    defaults: 20
+    description: |
+      Seconds allowed per source. Sources with their own timeout in config.json
+      keep theirs. A full sequential pass over 127 healthy sources takes about
+      two minutes, so this only bites on genuinely stuck sources.
+
+tasks:
+  - id: check
+    type: io.kestra.plugin.scripts.python.Commands
+    description: Probe every source once, sequentially, with a hard budget each
+    containerImage: python:3.13-slim
+    taskRunner:
+      type: io.kestra.plugin.scripts.runner.docker.Docker
+      volumes:
+        - "{{ inputs.work_dir }}:/work"
+    # Sequential and bounded, so 20 minutes is already generous.
+    timeout: PT20M
+    commands:
+      # --kestra always exits 0 and emits an output marker. The flow decides
+      # whether failures warrant a case; the script only reports.
+      - "python -u /work/check_sources.py --kestra --timeout {{ inputs.per_source_timeout }} --json summary.json --config /work/config.json"
+    outputFiles:
+      - summary.json
+
+  - id: open_case
+    type: io.kestra.plugin.kestra.ee.cases.CreateCase
+    description: Open or extend the source health case when something is broken
+    # runIf beats wrapping this in an If task: one less level of nesting, and
+    # the task still has direct access to the check outputs.
+    runIf: "{{ outputs.check.vars.failing > 0 }}"
+
+    # The task calls the Kestra REST API, so it needs credentials. Setting
+    # default authentication credentials on the namespace would let both of
+    # these be omitted.
+    auth:
+      apiToken: "{{ secret('KESTRA_API_TOKEN') }}"
+
+    title: "Blog monitor source health"
+    severity: MEDIUM
+
+    # Deduplication key is namespace + flow id + TASK id, not the title. So one
+    # case per task accumulates weeks of evidence instead of one case per run.
+    # It stays the same case until somebody resolves or cancels it.
+    linkMatchingExecutions: true
+
+    # Note the name: "description" is reserved for the task's own description.
+    caseDescription: |
+      {{ outputs.check.vars.failing }} of {{ outputs.check.vars.checked }} sources failed the weekly health check, {{ outputs.check.vars.hanging }} of them hanging rather than failing fast.
+
+      {{ outputs.check.vars.problem_markdown }}
+
+      **Why hanging matters more than failing.** A source returning 403 costs a
+      fraction of a second. A source that opens a TCP connection and then goes
+      silent blocks the entire digest run, because blog_monitor.py waits on
+      as_completed() with no timeout and a socket timeout restarts on every
+      byte. Two such sources turned a four minute run into fifty.
+
+      **Sources marked (parked)** are already excluded from the digest and live
+      in `parked_sources` in config.json. They stay measured here so a retired
+      source remains visible and can be restored if it recovers.
+
+      Recovered parked sources this run: {{ outputs.check.vars.recovered > 0 ? outputs.check.vars.recovered_names : 'none' }}
+
+      Full detail on the execution's Outputs tab as `summary.json`. Each week
+      attaches to this same case, so the linked executions are the history.
+
+    assignees:
+      users:
+        - "{{ inputs.case_assignee }}"
+
+    sla:
+      acknowledgement: P3D
+      resolution: P30D
+
+    # Attach this same flow as a one-click re-check. Case actions take no
+    # inputs in rc10 and fire immediately, which works here only because both
+    # inputs of this flow have defaults.
+    actions:
+      - label: Re-check all sources
+        namespace: kaiwaehner.blog
+        flowId: source_health
+
+  - id: summary
+    type: io.kestra.plugin.core.log.Log
+    # Written to read well inside a case. Attached as a Case Action, this flow
+    # answers the one question a parked-source case actually has: is it back?
+    message: |
+      {{ outputs.check.vars.checked }} sources checked, {{ outputs.check.vars.parked }} of them parked.
+
+      Still failing ({{ outputs.check.vars.failing }}, {{ outputs.check.vars.hanging }} hanging rather than failing fast):
+      {{ outputs.check.vars.problem_markdown }}
+
+      Recovered parked sources ({{ outputs.check.vars.recovered }}): {{ outputs.check.vars.recovered > 0 ? outputs.check.vars.recovered_names : 'none' }}
+      {{ outputs.check.vars.recovered > 0 ? 'Move these from parked_sources back into sources in config.json, keeping the name byte-identical so the state key still matches.' : '' }}
+
+triggers:
+  - id: weekly
+    type: io.kestra.plugin.core.trigger.Schedule
+    description: |
+      Monday 07:00, before both the production cron at 08:00 and the parallel
+      dry run at 10:00. A stuck source is then already visible as a case by the
+      time the digest runs into it.
+    cron: "0 7 * * 1"
+    timezone: Europe/Berlin

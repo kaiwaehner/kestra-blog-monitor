@@ -1,0 +1,64 @@
+id: source_check_single
+namespace: kaiwaehner.blog
+
+description: |
+  Probe a single source on demand.
+
+  Designed to be attached to a case as a Case Action, so a one-click re-check
+  replaces guessing whether a parked source has recovered. The execution links
+  back to the case, which means the answer lands in the case timeline instead
+  of a terminal nobody else can see.
+
+  Reads both `sources` and `parked_sources` from config.json, so it works for
+  retired sources that the digest no longer fetches.
+
+  Read-only. Never writes state, never sends mail.
+
+labels:
+  owner: kai
+  purpose: source-health
+
+inputs:
+  - id: filter
+    type: STRING
+    description: |
+      Substring matched against the source name or its URL, case-insensitive.
+      Examples: servicenow, envisionscada, uber, anomalo, blogs.microsoft.com
+
+  - id: timeout_seconds
+    type: INT
+    defaults: 30
+    description: |
+      Budget for this probe. Sources with their own timeout in config.json keep
+      theirs. Slightly higher than the weekly sweep's 20s, because a manual
+      re-check is asking "does it respond at all", not "is it fast".
+
+  - id: work_dir
+    type: STRING
+    defaults: /home/kestra/blog_monitor_kestra
+
+tasks:
+  - id: probe
+    type: io.kestra.plugin.scripts.python.Commands
+    description: Run check_sources.py against one source only
+    containerImage: python:3.13-slim
+    taskRunner:
+      type: io.kestra.plugin.scripts.runner.docker.Docker
+      volumes:
+        - "{{ inputs.work_dir }}:/work"
+    # One source with a 30s budget cannot legitimately take five minutes.
+    timeout: PT5M
+    commands:
+      - "python -u /work/check_sources.py --kestra --only '{{ inputs.filter }}' --timeout {{ inputs.timeout_seconds }} --json summary.json --config /work/config.json"
+    outputFiles:
+      - summary.json
+
+  - id: verdict
+    type: io.kestra.plugin.core.log.Log
+    # The log line is the point: it is what shows up against the case.
+    message: |
+      {{ inputs.filter }}: {{ outputs.probe.vars.failing }} of {{ outputs.probe.vars.checked }} matching source(s) still failing.
+      {{ outputs.probe.vars.problem_markdown }}
+      {{ outputs.probe.vars.failing == 0 ? 'Recovered. Move it from parked_sources back into sources, keeping the name byte-identical so the state key still matches.' : 'Still broken. Leave it parked.' }}
+
+# No trigger. This flow only runs when a human asks, from a case or by hand.

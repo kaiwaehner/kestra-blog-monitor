@@ -1,0 +1,127 @@
+id: blog_monitor
+namespace: kaiwaehner.blog
+
+description: |
+  Phase 1 of the blog monitor migration: the existing Python script runs
+  unchanged inside Kestra.
+
+  Nothing about blog_monitor.py is modified. Kestra provides the schedule,
+  retries, run history, and secrets. The script keeps its own fetching,
+  ranking, state handling and mail sending.
+
+  ISOLATION. The script resolves every path from its own directory
+  (BASE_DIR = Path(__file__).parent), so a parallel copy in
+  ~/blog_monitor_kestra gets its own config.json, seen_posts.json and
+  preview.html. The production cron job in ~/blog_monitor is untouched, and
+  the two never share state.
+
+  SECRETS. load_env() uses os.environ.setdefault, so environment variables
+  injected here take priority over any .env file. No .env is needed.
+
+  DRY RUN. The default mode. A dry run fetches everything, ranks, writes
+  preview.html, and touches neither the state file nor the inbox. That makes
+  parallel validation against the production run risk-free.
+
+labels:
+  owner: kai
+  phase: "1-wrap"
+
+# The script has no lock of its own: two runs writing seen_posts.json at the
+# same time means last writer wins. QUEUE holds a second execution until the
+# first finishes instead of letting them race.
+concurrency:
+  limit: 1
+  behavior: QUEUE
+
+inputs:
+  - id: mode
+    type: SELECT
+    defaults: dry-run
+    values:
+      - dry-run
+      - send
+    description: |
+      dry-run writes preview.html and sends no mail, leaving the state file
+      untouched. Keep this during parallel validation. Switch to send only once
+      the preview matches what the production cron job produced.
+
+  - id: work_dir
+    type: STRING
+    defaults: /home/kestra/blog_monitor_kestra
+    description: |
+      Parallel copy on the Beelink. Must NOT be ~/blog_monitor, or this flow
+      and the cron job would consume each other's new posts.
+
+tasks:
+  - id: run_monitor
+    type: io.kestra.plugin.scripts.python.Commands
+    description: Run the unmodified script against the parallel directory
+    containerImage: python:3.13-slim
+
+    # A healthy run is 3-5 minutes. Longer runs are not slow runs: the script
+    # fetches 129 sources through a ThreadPoolExecutor and waits on
+    # as_completed() with no timeout, so a single source that opens a TCP
+    # connection and then goes silent blocks the whole run indefinitely. A
+    # socket timeout does not help because it restarts on every byte.
+    #
+    # 15 minutes therefore means "something is stuck", not "today was busy".
+    # The root cause belongs in Phase 4 as a timeout on as_completed().
+    timeout: PT15M
+
+    # No retry. A retry re-runs the whole script, which can cost the better part
+    # of an hour, and the failure modes worth retrying (a single flaky source)
+    # are already handled inside the script with three attempts and backoff.
+    # A failed run simply means today's comparison is missing, and the next
+    # scheduled run picks everything up because dry runs never advance state.
+    taskRunner:
+      type: io.kestra.plugin.scripts.runner.docker.Docker
+      volumes:
+        - "{{ inputs.work_dir }}:/work"
+    beforeCommands:
+      # feedparser is the script's only third-party dependency. The venv on the
+      # Beelink was built against the host Python and is not reused here.
+      - pip install --quiet --no-cache-dir feedparser
+    env:
+      ANTHROPIC_API_KEY: "{{ secret('ANTHROPIC_API_KEY') }}"
+      BLOG_MONITOR_PASSWORD: "{{ secret('BLOG_MONITOR_PASSWORD') }}"
+    commands:
+      # No cd needed: the script derives every path from Path(__file__).parent,
+      # so config, state and preview all resolve inside /work regardless of the
+      # working directory. That leaves Kestra's working dir free for outputs.
+      - "python -u /work/blog_monitor.py {{ inputs.mode == 'dry-run' ? '--dry-run' : '' }}"
+      # Surface the preview in the UI. Optional: a send run writes none.
+      # monitor.log is deliberately not captured. That file is produced by the
+      # cron job's shell redirect, not by the script, so there is nothing to
+      # read here. Kestra's own task log is the better record anyway.
+      - "cp /work/preview.html . 2>/dev/null || true"
+    outputFiles:
+      - preview.html
+
+  - id: summary
+    type: io.kestra.plugin.core.log.Log
+    message: |
+      Blog monitor finished. mode={{ inputs.mode }}, dir={{ inputs.work_dir }}
+      Preview and log are on the Outputs tab.
+
+triggers:
+  - id: daily_dry_run
+    type: io.kestra.plugin.core.trigger.Schedule
+    description: |
+      10:00, deliberately well clear of the production cron job at 08:00.
+
+      08:30 was too close. On a busy morning the cron run took 50 minutes, so
+      the two overlapped and both hammered the same 129 sources at once with
+      10 parallel workers each. Sites throttled, the script's own backoff
+      kicked in, and both runs slowed each other down.
+
+      Note that concurrency: limit 1 does NOT prevent this. It only serialises
+      executions of this flow. The cron job runs outside Kestra entirely, so
+      the scheduler cannot see it. Separation in time is the only lever until
+      cron is retired in Phase 3.
+
+      mode is pinned to dry-run so the schedule can never send mail, even if
+      the input default changes later.
+    cron: "0 10 * * *"
+    timezone: Europe/Berlin
+    inputs:
+      mode: dry-run

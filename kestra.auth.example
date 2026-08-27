@@ -1,0 +1,15 @@
+# Copy to kestra.auth and fill in. kestra.auth is gitignored.
+#
+# Where Kestra runs and how to reach the machine it runs on.
+HOST=you@192.168.1.10
+KESTRA=http://192.168.1.10:8080
+REMOTE_DIR=~/kestra
+NS=yourname.blog
+TENANT=main
+
+# EE: an API token from your user menu, API Tokens.
+KESTRA_TOKEN=
+
+# OSS: basic auth instead of a token. Leave KESTRA_TOKEN empty if you use these.
+KESTRA_USER=
+KESTRA_PASS=

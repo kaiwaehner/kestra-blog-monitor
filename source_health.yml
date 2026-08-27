@@ -38,7 +38,7 @@ concurrency:
 inputs:
   - id: work_dir
     type: STRING
-    defaults: /home/kestra/blog_monitor_kestra
+    defaults: /home/kaiwaehner/blog_monitor_kestra
     description: |
       Runs against the parallel copy, not production. The check is read-only,
       but there is no reason to point it at the live directory.

@@ -47,7 +47,7 @@ inputs:
 
   - id: work_dir
     type: STRING
-    defaults: /home/kestra/blog_monitor_kestra
+    defaults: /home/kaiwaehner/blog_monitor_kestra
     description: |
       Parallel copy on the Beelink. Must NOT be ~/blog_monitor, or this flow
       and the cron job would consume each other's new posts.

@@ -3,7 +3,7 @@
 # Where Kestra runs and how to reach the machine it runs on.
 HOST=you@192.168.1.10
 KESTRA=http://192.168.1.10:8080
-REMOTE_DIR=~/kestra
+REMOTE_DIR=/home/you/kestra
 NS=yourname.blog
 TENANT=main
 

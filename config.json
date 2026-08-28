@@ -21,7 +21,8 @@
     "error_notify_days": 7,
     "auto_discover_feeds": true,
     "scrape_max_new_per_run": 15,
-    "discovery_retry_days": 14
+    "discovery_retry_days": 14,
+    "fetch_total_timeout": 120
   },
   "pillar_order": [
     "Data Integration & Streaming",

@@ -3,7 +3,6 @@ kestra.auth
 *.env
 !*.env.example
 secrets/
-config.json
 seen_posts.json
 seen_posts*.json
 *.bak

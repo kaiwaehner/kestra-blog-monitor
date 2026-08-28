@@ -1,0 +1,983 @@
+{
+  "email": {
+    "sender": "you@gmail.com",
+    "recipient": "you@example.com",
+    "_comment": "Credentials live in .env, never in this file: BLOG_MONITOR_PASSWORD and ANTHROPIC_API_KEY"
+  },
+  "ranking": {
+    "enabled": true,
+    "model": "claude-sonnet-5",
+    "max_items": 20,
+    "min_score": 3,
+    "max_candidates": 250,
+    "timeout": 120,
+    "max_per_source": 3,
+    "max_tokens": 8000
+  },
+  "settings": {
+    "max_workers": 10,
+    "request_timeout": 15,
+    "state_keep_per_source": 3000,
+    "error_notify_days": 7,
+    "auto_discover_feeds": true,
+    "scrape_max_new_per_run": 15,
+    "discovery_retry_days": 14
+  },
+  "pillar_order": [
+    "Data Integration & Streaming",
+    "Process Intelligence & Workflow Orchestration",
+    "Trusted Agentic AI",
+    "Data Governance & Quality",
+    "Industrial IoT & Edge",
+    "Enterprise Architecture & Practitioners",
+    "DACH, ERP & Analysts"
+  ],
+  "sources": [
+    {
+      "name": "Robin Moffatt (rmoff.net)",
+      "pillar": "Data Integration & Streaming",
+      "method": "rss",
+      "feed_url": "https://rmoff.net/index.xml"
+    },
+    {
+      "name": "Bernard Marr",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "feed_url": "https://bernardmarr.com/feed/"
+    },
+    {
+      "name": "InfoQ",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://feed.infoq.com/"
+    },
+    {
+      "name": "The New Stack",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://thenewstack.io/feed/"
+    },
+    {
+      "name": "Thoughtworks Insights",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://www.thoughtworks.com/rss/insights.xml"
+    },
+    {
+      "name": "AWS Blog",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://aws.amazon.com/blogs/aws/feed/"
+    },
+    {
+      "name": "Google Cloud Blog",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://cloudblog.withgoogle.com/rss"
+    },
+    {
+      "name": "Azure Blog",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://azure.microsoft.com/en-us/blog/feed/"
+    },
+    {
+      "name": "Databricks Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "rss",
+      "feed_url": "https://www.databricks.com/feed"
+    },
+    {
+      "name": "OpenAI News",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "feed_url": "https://openai.com/news/rss.xml"
+    },
+    {
+      "name": "Google DeepMind Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "feed_url": "https://deepmind.google/blog/rss.xml"
+    },
+    {
+      "name": "Hugging Face Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "feed_url": "https://huggingface.co/blog/feed.xml"
+    },
+    {
+      "name": "Nvidia Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "feed_url": "https://blogs.nvidia.com/feed/"
+    },
+    {
+      "name": "Microsoft AI Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "feed_url": "https://blogs.microsoft.com/feed/"
+    },
+    {
+      "name": "UiPath Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "rss",
+      "feed_url": "https://www.uipath.com/blog/rss.xml"
+    },
+    {
+      "name": "Pega Community Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "rss",
+      "feed_url": "https://community.pega.com/blog/feed"
+    },
+    {
+      "name": "Martin Fowler",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "scrape",
+      "url": "https://martinfowler.com/",
+      "base_url": "https://martinfowler.com",
+      "link_filter": "/articles/"
+    },
+    {
+      "name": "Gregor Hohpe (Architect Elevator)",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://architectelevator.com/feed.xml"
+    },
+    {
+      "name": "Confluent Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://www.confluent.io/blog/",
+      "base_url": "https://www.confluent.io",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Apache Kafka Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://kafka.apache.org/blog/",
+      "base_url": "https://kafka.apache.org",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Conduktor Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "sitemap",
+      "sitemap_url": "https://www.conduktor.io/sitemap.xml",
+      "path_filter": "/blog/",
+      "max_index_children": 6
+    },
+    {
+      "name": "Ververica Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://www.ververica.com/blog",
+      "base_url": "https://www.ververica.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Aiven Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://aiven.io/blog",
+      "base_url": "https://aiven.io",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "StreamNative Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://streamnative.io/blog",
+      "base_url": "https://streamnative.io",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Redpanda Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://www.redpanda.com/blog",
+      "base_url": "https://www.redpanda.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Materialize Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://materialize.com/blog/",
+      "base_url": "https://materialize.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "RisingWave Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://risingwave.com/blog/",
+      "base_url": "https://risingwave.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "HiveMQ Blog",
+      "pillar": "Industrial IoT & Edge",
+      "method": "rss",
+      "feed_url": "https://www.hivemq.com/feed/"
+    },
+    {
+      "name": "EMQX Blog",
+      "pillar": "Industrial IoT & Edge",
+      "method": "scrape",
+      "url": "https://www.emqx.com/en/blog",
+      "base_url": "https://www.emqx.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Eclipse Mosquitto",
+      "pillar": "Industrial IoT & Edge",
+      "method": "rss",
+      "feed_url": "https://mosquitto.org/rss.xml"
+    },
+    {
+      "name": "PTC ThingWorx Blog",
+      "pillar": "Industrial IoT & Edge",
+      "method": "sitemap",
+      "sitemap_url": "https://www.ptc.com/sitemap.xml",
+      "path_filter": "/blogs/",
+      "max_index_children": 6
+    },
+    {
+      "name": "Siemens Insights Hub Blog",
+      "pillar": "Industrial IoT & Edge",
+      "method": "rss",
+      "feed_url": "https://blog.siemens.com/feed/"
+    },
+    {
+      "name": "Litmus Edge Blog",
+      "pillar": "Industrial IoT & Edge",
+      "method": "scrape",
+      "url": "https://litmus.io/blog",
+      "base_url": "https://litmus.io",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Cumulocity Blog",
+      "pillar": "Industrial IoT & Edge",
+      "method": "rss",
+      "feed_url": "https://cumulocity.com/blog/index.xml"
+    },
+    {
+      "name": "HighByte Blog",
+      "pillar": "Industrial IoT & Edge",
+      "method": "scrape",
+      "url": "https://www.highbyte.com/blog/",
+      "base_url": "https://www.highbyte.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "AVEVA Blog",
+      "pillar": "Industrial IoT & Edge",
+      "method": "scrape",
+      "url": "https://www.aveva.com/en/perspectives/blog/",
+      "base_url": "https://www.aveva.com",
+      "link_filter": "/en/perspectives/blog/"
+    },
+    {
+      "name": "Inductive Automation (Ignition) Blog",
+      "pillar": "Industrial IoT & Edge",
+      "method": "scrape",
+      "url": "https://inductiveautomation.com/blog/",
+      "base_url": "https://inductiveautomation.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "United Manufacturing Hub Blog",
+      "pillar": "Industrial IoT & Edge",
+      "method": "scrape",
+      "url": "https://learn.umh.app/blog/",
+      "base_url": "https://learn.umh.app",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Tier0 Blog",
+      "pillar": "Industrial IoT & Edge",
+      "method": "sitemap",
+      "sitemap_url": "https://tier0.app/sitemap.xml",
+      "path_filter": "/blog",
+      "max_index_children": 6
+    },
+    {
+      "name": "Fivetran Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://www.fivetran.com/blog",
+      "base_url": "https://www.fivetran.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Airbyte Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://airbyte.com/blog",
+      "base_url": "https://airbyte.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Estuary Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://estuary.dev/blog/",
+      "base_url": "https://estuary.dev",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "dbt Labs Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://www.getdbt.com/blog",
+      "base_url": "https://www.getdbt.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Striim Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://www.striim.com/blog/",
+      "base_url": "https://www.striim.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Boomi Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://boomi.com/blog/",
+      "base_url": "https://boomi.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Soda Blog",
+      "pillar": "Data Governance & Quality",
+      "method": "scrape",
+      "url": "https://www.soda.io/blog",
+      "base_url": "https://www.soda.io",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "DataHub Blog",
+      "pillar": "Data Governance & Quality",
+      "method": "scrape",
+      "url": "https://datahub.com/blog/",
+      "base_url": "https://datahub.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "OpenMetadata Blog",
+      "pillar": "Data Governance & Quality",
+      "method": "rss",
+      "feed_url": "https://blog.open-metadata.org/feed"
+    },
+    {
+      "name": "Collibra Blog",
+      "pillar": "Data Governance & Quality",
+      "method": "scrape",
+      "url": "https://www.collibra.com/blog",
+      "base_url": "https://www.collibra.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Atlan Blog",
+      "pillar": "Data Governance & Quality",
+      "method": "scrape",
+      "url": "https://atlan.com/know/",
+      "base_url": "https://atlan.com",
+      "link_filter": "/know/"
+    },
+    {
+      "name": "Anomalo Blog",
+      "pillar": "Data Governance & Quality",
+      "method": "sitemap",
+      "sitemap_url": "https://www.anomalo.com/sitemap.xml",
+      "path_filter": "/blog/",
+      "max_index_children": 8
+    },
+    {
+      "name": "Great Expectations Blog",
+      "pillar": "Data Governance & Quality",
+      "method": "scrape",
+      "url": "https://greatexpectations.io/blog/",
+      "base_url": "https://greatexpectations.io",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Ataccama Blog",
+      "pillar": "Data Governance & Quality",
+      "method": "scrape",
+      "url": "https://www.ataccama.com/blog",
+      "base_url": "https://www.ataccama.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "DataGalaxy Blog",
+      "pillar": "Data Governance & Quality",
+      "method": "scrape",
+      "url": "https://www.datagalaxy.com/en/blog/",
+      "base_url": "https://www.datagalaxy.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Kong Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://konghq.com/blog",
+      "base_url": "https://konghq.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Gravitee Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://www.gravitee.io/blog",
+      "base_url": "https://www.gravitee.io",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Apigee (Google) Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://cloud.google.com/blog/products/api-management",
+      "base_url": "https://cloud.google.com",
+      "link_filter": "/blog/",
+      "timeout": 30
+    },
+    {
+      "name": "MuleSoft Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://blogs.mulesoft.com/",
+      "base_url": "https://blogs.mulesoft.com",
+      "link_filter": "blogs.mulesoft.com/"
+    },
+    {
+      "name": "Snowflake Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "rss",
+      "feed_url": "https://www.snowflake.com/feed/"
+    },
+    {
+      "name": "Kestra Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "scrape",
+      "url": "https://kestra.io/blogs",
+      "base_url": "https://kestra.io",
+      "link_filter": "/blogs/"
+    },
+    {
+      "name": "Temporal Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "scrape",
+      "url": "https://temporal.io/blog",
+      "base_url": "https://temporal.io",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Prefect Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "sitemap",
+      "sitemap_url": "https://www.prefect.io/sitemap.xml",
+      "path_filter": "/blog/",
+      "max_index_children": 6
+    },
+    {
+      "name": "Dagster Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "rss",
+      "feed_url": "https://dagster.io/blog/rss.xml"
+    },
+    {
+      "name": "Apache Airflow Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "scrape",
+      "url": "https://airflow.apache.org/blog/",
+      "base_url": "https://airflow.apache.org",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Camunda Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "scrape",
+      "url": "https://camunda.com/blog/",
+      "base_url": "https://camunda.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Celonis Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "scrape",
+      "url": "https://www.celonis.com/blog/",
+      "base_url": "https://www.celonis.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Appian Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "scrape",
+      "url": "https://appian.com/blog/blog",
+      "base_url": "https://appian.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "ABBYY Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "scrape",
+      "url": "https://www.abbyy.com/blog/",
+      "base_url": "https://www.abbyy.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Nintex Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "scrape",
+      "url": "https://www.nintex.com/blog/",
+      "base_url": "https://www.nintex.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Flowable Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "scrape",
+      "url": "https://flowable.com/blog/",
+      "base_url": "https://flowable.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Software AG ARIS Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "scrape",
+      "url": "https://www.softwareag.com/en_corporate/blog.html",
+      "base_url": "https://www.softwareag.com",
+      "link_filter": "/blog"
+    },
+    {
+      "name": "Apromore Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "rss",
+      "feed_url": "https://apromore.com/blog/rss.xml"
+    },
+    {
+      "name": "Skan.ai Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "scrape",
+      "url": "https://www.skan.ai/blogs",
+      "base_url": "https://www.skan.ai",
+      "link_filter": "/blog"
+    },
+    {
+      "name": "Anthropic News",
+      "pillar": "Trusted Agentic AI",
+      "method": "scrape",
+      "url": "https://www.anthropic.com/news",
+      "base_url": "https://www.anthropic.com",
+      "link_filter": "/news/"
+    },
+    {
+      "name": "Mistral AI Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "scrape",
+      "url": "https://mistral.ai/news/",
+      "base_url": "https://mistral.ai",
+      "link_filter": "/news/"
+    },
+    {
+      "name": "Cohere Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "scrape",
+      "url": "https://cohere.com/blog",
+      "base_url": "https://cohere.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "IBM Research Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "scrape",
+      "url": "https://research.ibm.com/blog",
+      "base_url": "https://research.ibm.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "LangChain Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "feed_url": "https://www.langchain.com/blog/rss.xml"
+    },
+    {
+      "name": "LlamaIndex Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "scrape",
+      "url": "https://www.llamaindex.ai/blog",
+      "base_url": "https://www.llamaindex.ai",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Together AI Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "scrape",
+      "url": "https://www.together.ai/blog",
+      "base_url": "https://www.together.ai",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Fireworks AI Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "scrape",
+      "url": "https://fireworks.ai/blog",
+      "base_url": "https://fireworks.ai",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "SAP Blog",
+      "pillar": "DACH, ERP & Analysts",
+      "method": "rss",
+      "feed_url": "https://news.sap.com/feed/"
+    },
+    {
+      "name": "Accenture Insights",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "sitemap",
+      "sitemap_url": "https://www.accenture.com/sitemap-index.xml",
+      "path_filter": "/insights/",
+      "max_index_children": 8
+    },
+    {
+      "name": "Capgemini Insights",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "scrape",
+      "url": "https://www.capgemini.com/insights/",
+      "base_url": "https://www.capgemini.com",
+      "link_filter": "/insights/"
+    },
+    {
+      "name": "Kai Waehner (own blog)",
+      "pillar": "Data Integration & Streaming",
+      "method": "rss",
+      "feed_url": "https://www.kai-waehner.de/feed/"
+    },
+    {
+      "name": "Confluent Developer Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "rss",
+      "feed_url": "https://developer.confluent.io/blog/rss.xml"
+    },
+    {
+      "name": "Apache Flink Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "rss",
+      "feed_url": "https://flink.apache.org/index.xml"
+    },
+    {
+      "name": "Apache Iceberg Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "rss",
+      "feed_url": "https://iceberg.apache.org/rss.xml"
+    },
+    {
+      "name": "AutoMQ Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "sitemap",
+      "sitemap_url": "https://www.automq.com/sitemap.xml",
+      "path_filter": "/blog/",
+      "max_index_children": 6
+    },
+    {
+      "name": "ClickHouse Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://clickhouse.com/blog",
+      "base_url": "https://clickhouse.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Debezium Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "rss",
+      "feed_url": "https://debezium.io/blog.atom"
+    },
+    {
+      "name": "Decodable Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://www.decodable.co/blog",
+      "base_url": "https://www.decodable.co",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Informatica Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://www.informatica.com/blogs.html",
+      "base_url": "https://www.informatica.com",
+      "link_filter": "/blogs/"
+    },
+    {
+      "name": "Qlik / Talend Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://www.qlik.com/blog",
+      "base_url": "https://www.qlik.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Solace Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "rss",
+      "feed_url": "https://solace.com/blog/feed/"
+    },
+    {
+      "name": "Workato Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://www.workato.com/the-connector/",
+      "base_url": "https://www.workato.com",
+      "link_filter": "/the-connector/"
+    },
+    {
+      "name": "Astronomer Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "scrape",
+      "url": "https://www.astronomer.io/blog/",
+      "base_url": "https://www.astronomer.io",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "HashiCorp Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "sitemap",
+      "sitemap_url": "https://www.hashicorp.com/sitemap.xml",
+      "path_filter": "/blog/",
+      "max_index_children": 6
+    },
+    {
+      "name": "Inngest Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "scrape",
+      "url": "https://www.inngest.com/blog",
+      "base_url": "https://www.inngest.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "n8n Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "rss",
+      "feed_url": "https://blog.n8n.io/rss/"
+    },
+    {
+      "name": "Orkes Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "scrape",
+      "url": "https://orkes.io/blog",
+      "base_url": "https://orkes.io",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Spacelift Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "scrape",
+      "url": "https://spacelift.io/blog",
+      "base_url": "https://spacelift.io",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Windmill Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "scrape",
+      "url": "https://www.windmill.dev/blog",
+      "base_url": "https://www.windmill.dev",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Arize AI Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "scrape",
+      "url": "https://arize.com/blog/",
+      "base_url": "https://arize.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "AWS Machine Learning Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "feed_url": "https://aws.amazon.com/blogs/machine-learning/feed/"
+    },
+    {
+      "name": "DeepSeek News",
+      "pillar": "Trusted Agentic AI",
+      "method": "scrape",
+      "url": "https://api-docs.deepseek.com/news/",
+      "base_url": "https://api-docs.deepseek.com",
+      "link_filter": "/news/"
+    },
+    {
+      "name": "EU AI Act Newsroom",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "feed_url": "https://artificialintelligenceact.eu/feed/"
+    },
+    {
+      "name": "Meta AI Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "scrape",
+      "url": "https://ai.meta.com/blog/",
+      "base_url": "https://ai.meta.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Model Context Protocol Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "feed_url": "https://blog.modelcontextprotocol.io/index.xml"
+    },
+    {
+      "name": "Neo4j Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "feed_url": "https://neo4j.com/blog/feed/"
+    },
+    {
+      "name": "Qwen Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "feed_url": "https://qwenlm.github.io/blog/index.xml"
+    },
+    {
+      "name": "Simon Willison",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "feed_url": "https://simonwillison.net/atom/everything/"
+    },
+    {
+      "name": "Chris Riccomini (Materialized View)",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "scrape",
+      "url": "https://materializedview.io/",
+      "base_url": "https://materializedview.io",
+      "link_filter": "/p/"
+    },
+    {
+      "name": "CNCF Blog",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://www.cncf.io/feed/"
+    },
+    {
+      "name": "Data Engineering Weekly",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://www.dataengineeringweekly.com/feed"
+    },
+    {
+      "name": "Forrester Blogs",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://www.forrester.com/blogs/feed/"
+    },
+    {
+      "name": "Gunnar Morling",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "scrape",
+      "url": "https://www.morling.dev/blog/",
+      "base_url": "https://www.morling.dev",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Jack Vanlightly",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "scrape",
+      "url": "https://jack-vanlightly.com/blog",
+      "base_url": "https://jack-vanlightly.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "LinkedIn Engineering",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "scrape",
+      "url": "https://www.linkedin.com/blog/engineering",
+      "base_url": "https://www.linkedin.com",
+      "link_filter": "/blog/engineering/"
+    },
+    {
+      "name": "Matt Turck",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://mattturck.com/feed/atom/"
+    },
+    {
+      "name": "Netflix TechBlog",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://netflixtechblog.com/feed"
+    },
+    {
+      "name": "Uber Engineering",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "scrape",
+      "url": "https://www.uber.com/blog/engineering/",
+      "base_url": "https://www.uber.com",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Werner Vogels",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://www.allthingsdistributed.com/atom.xml"
+    },
+    {
+      "name": "ams.erp News",
+      "pillar": "DACH, ERP & Analysts",
+      "method": "rss",
+      "feed_url": "https://www.ams-erp.com/feed/",
+      "timeout": 30
+    },
+    {
+      "name": "Computerwoche",
+      "pillar": "DACH, ERP & Analysts",
+      "method": "rss",
+      "feed_url": "https://www.computerwoche.de/feed/"
+    },
+    {
+      "name": "heise Developer",
+      "pillar": "DACH, ERP & Analysts",
+      "method": "rss",
+      "feed_url": "https://www.heise.de/developer/rss/news-atom.xml"
+    },
+    {
+      "name": "VlexPlus News",
+      "pillar": "DACH, ERP & Analysts",
+      "method": "scrape",
+      "url": "https://www.vlexplus.com/",
+      "base_url": "https://www.vlexplus.com",
+      "link_filter": "/news"
+    }
+  ],
+  "parked_sources": [
+    {
+      "name": "EnvisionSCADA (Knowledge Base)",
+      "pillar": "Industrial IoT & Edge",
+      "method": "scrape",
+      "url": "https://www.envisionscada.com/KnowledgeBase",
+      "base_url": "https://www.envisionscada.com",
+      "link_filter": "/KnowledgeBase",
+      "timeout": 30,
+      "parked_on": "2026-08-26",
+      "parked_reason": "Renders client-side, no feed, no sitemap. Opened a TCP connection and then went silent, which hung the whole run because as_completed() has no timeout. 13 stacked sockets observed.",
+      "parked_fix": "Needs a headless browser, or find a Substack/Medium/Ghost mirror."
+    },
+    {
+      "name": "ServiceNow Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "scrape",
+      "url": "https://www.servicenow.com/blogs.html",
+      "base_url": "https://www.servicenow.com",
+      "link_filter": "/blogs/",
+      "timeout": 45,
+      "parked_on": "2026-08-26",
+      "parked_reason": "No data within its own 45s budget. Same hang pattern, single socket. Failing in the digest for weeks.",
+      "parked_fix": "Check for an RSS feed or sitemap.xml on servicenow.com, or drop."
+    }
+  ]
+}

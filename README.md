@@ -50,8 +50,57 @@ orchestration means rewriting. It does not.
 | `check_sources.py` | The diagnostic. Sequential, bounded, read-only. Reports hung sources, failing sources, and parked sources that have recovered. |
 | `park_sources.py` | Moves a broken source into `parked_sources` instead of deleting it, with the reason and what a fix would need. |
 | `deploy.sh` | Deploys every flow in this directory. |
+| `blog_monitor.py` | The script being migrated. Unmodified by phase 1; carries the `as_completed` fix from phase 4. |
+| `config.json` | Sources, pillars, ranking settings, and the `parked_sources` block. Email addresses are placeholders. |
 
-`blog_monitor.py` itself is not in this repository.
+Not in the repository, and gitignored: `.env`, `seen_posts.json` (~2 MB of post
+IDs, rewritten every run) and `kestra.auth`.
+
+## The fix
+
+Three changes to `blog_monitor.py`, roughly ten lines, all in service of one
+rule: no single source may hold the run.
+
+```python
+# 1. as_completed with no timeout waits forever on a future that never returns
+for fut in as_completed(futures, timeout=total_budget):
+    ...
+except FuturesTimeout:
+    pass
+
+# 2. anything that never came back is reported, not silently dropped
+for fut, src in futures.items():
+    if fut not in finished:
+        results.append({..., "error": f"no response within {total_budget}s, abandoned"})
+
+# 3. no `with` block: leaving one calls shutdown(wait=True), which joins the
+#    hung threads and blocks anyway
+pool.shutdown(wait=False, cancel_futures=True)
+```
+
+And a fourth that only shows up once the first three work:
+
+```python
+if __name__ == "__main__":
+    main()
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(0)
+```
+
+A thread stuck in a socket read cannot be cancelled, and Python joins every
+non-daemon thread at interpreter exit. Without `os._exit` the process hangs
+*after* the mail has been sent and the state written. Under an orchestrator
+that means a successful run reported as a timeout failure. Verified in an
+isolated test: the logic finished in 2 seconds and the process still had to be
+killed.
+
+Measured, same scenario with two deliberately silent sources:
+
+| | Result |
+|---|---|
+| Before | Hangs indefinitely. Killed at 20s in the test. |
+| After | Completes in 3s, both sources reported as `no response within 3s, abandoned`, exits 0. |
 
 ## Two ideas worth stealing
 

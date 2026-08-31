@@ -854,10 +854,8 @@
     {
       "name": "Chris Riccomini (Materialized View)",
       "pillar": "Enterprise Architecture & Practitioners",
-      "method": "scrape",
-      "url": "https://materializedview.io/",
-      "base_url": "https://materializedview.io",
-      "link_filter": "/p/"
+      "method": "rss",
+      "feed_url": "https://materializedview.io/feed"
     },
     {
       "name": "CNCF Blog",

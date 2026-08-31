@@ -111,7 +111,7 @@ tasks:
       Preview and log are on the Outputs tab.
 
 triggers:
-  - id: daily_dry_run
+  - id: daily
     type: io.kestra.plugin.core.trigger.Schedule
     description: |
       08:00, the slot the cron job used to hold. Cron is commented out rather

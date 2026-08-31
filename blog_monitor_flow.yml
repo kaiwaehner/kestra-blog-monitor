@@ -9,22 +9,24 @@ description: |
   retries, run history, and secrets. The script keeps its own fetching,
   ranking, state handling and mail sending.
 
-  ISOLATION. The script resolves every path from its own directory
-  (BASE_DIR = Path(__file__).parent), so a parallel copy in
-  ~/blog_monitor_kestra gets its own config.json, seen_posts.json and
-  preview.html. The production cron job in ~/blog_monitor is untouched, and
-  the two never share state.
+  PATHS. The script resolves every path from its own directory
+  (BASE_DIR = Path(__file__).parent), so pointing work_dir somewhere else is
+  enough to switch which config.json, seen_posts.json and preview.html it uses.
+  During phase 2 that gave a parallel copy with its own state; in phase 3 it is
+  how the flow takes over the production directory without copying anything.
 
   SECRETS. load_env() uses os.environ.setdefault, so environment variables
   injected here take priority over any .env file. No .env is needed.
 
-  DRY RUN. The default mode. A dry run fetches everything, ranks, writes
-  preview.html, and touches neither the state file nor the inbox. That makes
-  parallel validation against the production run risk-free.
+  MODE. Defaults to send, which is what the schedule uses. dry-run still works
+  for testing: it fetches, ranks, writes preview.html, and touches neither the
+  state file nor the inbox. Note that a long run of dry runs freezes the state,
+  so the "new posts" count climbs and the ranking response eventually gets cut
+  off. That is expected, not a fault.
 
 labels:
   owner: kai
-  phase: "1-wrap"
+  phase: "3-cutover"
 
 # The script has no lock of its own: two runs writing seen_posts.json at the
 # same time means last writer wins. QUEUE holds a second execution until the
@@ -36,7 +38,7 @@ concurrency:
 inputs:
   - id: mode
     type: SELECT
-    defaults: dry-run
+    defaults: send
     values:
       - dry-run
       - send
@@ -47,10 +49,15 @@ inputs:
 
   - id: work_dir
     type: STRING
-    defaults: /home/kaiwaehner/blog_monitor_kestra
+    defaults: /home/kaiwaehner/blog_monitor
     description: |
-      Parallel copy on the Beelink. Must NOT be ~/blog_monitor, or this flow
-      and the cron job would consume each other's new posts.
+      Phase 3: this now points at the production directory, and the cron job
+      that used to own it is commented out.
+
+      Pointing at the same directory rather than copying state across is what
+      makes the cutover exactly-once. One state file, one writer, no gap and no
+      overlap. The only way to break that is to let cron and Kestra run at the
+      same time, which is why cron is disabled first and the flow second.
 
 tasks:
   - id: run_monitor
@@ -107,21 +114,16 @@ triggers:
   - id: daily_dry_run
     type: io.kestra.plugin.core.trigger.Schedule
     description: |
-      10:00, deliberately well clear of the production cron job at 08:00.
+      08:00, the slot the cron job used to hold. Cron is commented out rather
+      than deleted, so a rollback is one crontab command.
 
-      08:30 was too close. On a busy morning the cron run took 50 minutes, so
-      the two overlapped and both hammered the same 129 sources at once with
-      10 parallel workers each. Sites throttled, the script's own backoff
-      kicked in, and both runs slowed each other down.
-
-      Note that concurrency: limit 1 does NOT prevent this. It only serialises
-      executions of this flow. The cron job runs outside Kestra entirely, so
-      the scheduler cannot see it. Separation in time is the only lever until
-      cron is retired in Phase 3.
-
-      mode is pinned to dry-run so the schedule can never send mail, even if
-      the input default changes later.
-    cron: "0 10 * * *"
+      During the parallel phase this ran at 10:00 and was pinned to dry-run.
+      08:30 had been too close: on a busy morning the cron run took 50 minutes,
+      the two overlapped, and both hammered the same sources with 10 workers
+      each. Worth remembering that concurrency: limit 1 does not help there. It
+      only serialises executions of THIS flow; a cron job outside Kestra is
+      invisible to the scheduler.
+    cron: "0 8 * * *"
     timezone: Europe/Berlin
     inputs:
-      mode: dry-run
+      mode: send

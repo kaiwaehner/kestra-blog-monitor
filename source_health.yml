@@ -38,10 +38,11 @@ concurrency:
 inputs:
   - id: work_dir
     type: STRING
-    defaults: /home/kaiwaehner/blog_monitor_kestra
+    defaults: /home/kaiwaehner/blog_monitor
     description: |
-      Runs against the parallel copy, not production. The check is read-only,
-      but there is no reason to point it at the live directory.
+      Points at the production directory since the phase 3 cutover. The parallel
+      copy is gone. The check is read-only, so sharing the directory is safe: it
+      never writes state and never sends mail.
 
   - id: case_assignee
     type: STRING

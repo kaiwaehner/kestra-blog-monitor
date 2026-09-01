@@ -153,8 +153,13 @@ def main():
     # A parked source that now responds is the single most actionable result
     # here: it means the entry can move back into "sources". Call it out
     # separately rather than leaving it to be inferred from an absence.
+    # Only meaningful when every source was checked. With --only, a parked
+    # source that was never probed would otherwise be reported as recovered
+    # purely because it is absent from the failure list.
+    checked_names = {r[2] for r in results}
     still_bad = {r[2] for r in bad}
-    recovered = sorted(n for n in parked if n not in still_bad)
+    recovered = sorted(n for n in parked
+                       if n in checked_names and n not in still_bad)
 
     if recovered:
         print("\nParked sources that responded and could be restored:\n")

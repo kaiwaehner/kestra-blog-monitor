@@ -12,7 +12,7 @@
     "max_candidates": 250,
     "timeout": 120,
     "max_per_source": 3,
-    "max_tokens": 8000
+    "max_tokens": 12000
   },
   "settings": {
     "max_workers": 10,

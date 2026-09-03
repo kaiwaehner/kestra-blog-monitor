@@ -762,10 +762,14 @@ def rank_posts(posts, cfg):
         return [], None
     if not api_key or "REPLACE" in api_key.upper() or api_key == "sk-ant-...":
         return [], "no Anthropic API key configured, Top News skipped"
-    if len(posts) <= 3:
+    # Sources marked "rank": false never compete for Top News. Keeping them out
+    # of the candidate list also means not paying tokens for titles that could
+    # only ever score a 1 against the professional criteria in RANKING_SYSTEM.
+    pool = [p for p in posts if p.get("rankable", True)]
+    if len(pool) <= 3:
         return [], None
 
-    candidates = posts[: cfg.get("max_candidates", 400)]
+    candidates = pool[: cfg.get("max_candidates", 400)]
     lines = []
     for i, p in enumerate(candidates):
         extra = f" | {p['summary'][:140]}" if p.get("summary") else ""
@@ -1224,6 +1228,7 @@ def main():
         for item in fresh:
             item["blog"]   = name
             item["pillar"] = src.get("pillar", "Uncategorized")
+            item["rankable"] = src.get("rank", True)
             new_posts.append(item)
 
         if fresh:

@@ -31,7 +31,8 @@
     "Data Governance & Quality",
     "Industrial IoT & Edge",
     "Enterprise Architecture & Practitioners",
-    "DACH, ERP & Analysts"
+    "DACH, ERP & Analysts",
+    "Gaming"
   ],
   "sources": [
     {
@@ -951,6 +952,184 @@
       "url": "https://www.vlexplus.com/",
       "base_url": "https://www.vlexplus.com",
       "link_filter": "/news"
+    },
+    {
+      "name": "Orchestra Blog",
+      "pillar": "Process Intelligence & Workflow Orchestration",
+      "method": "scrape",
+      "url": "https://www.getorchestra.io/blog",
+      "base_url": "https://www.getorchestra.io",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Apache Fluss Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://fluss.apache.org/blog/",
+      "base_url": "https://fluss.apache.org",
+      "link_filter": "/blog/"
+    },
+    {
+      "name": "Apache Hudi Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "rss",
+      "feed_url": "https://hudi.apache.org/blog/rss.xml"
+    },
+    {
+      "name": "DuckDB Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://duckdb.org/news/",
+      "base_url": "https://duckdb.org",
+      "link_filter": "/20"
+    },
+    {
+      "name": "DuckLake Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "scrape",
+      "url": "https://ducklake.select/",
+      "base_url": "https://ducklake.select",
+      "link_filter": "/20"
+    },
+    {
+      "name": "Feldera Blog",
+      "pillar": "Data Integration & Streaming",
+      "method": "rss",
+      "feed_url": "https://www.feldera.com/blog/rss.xml"
+    },
+    {
+      "name": "Analytics Engineering Roundup (dbt)",
+      "pillar": "Data Integration & Streaming",
+      "method": "rss",
+      "feed_url": "https://roundup.getdbt.com/feed"
+    },
+    {
+      "name": "Michael Drogalis",
+      "pillar": "Data Integration & Streaming",
+      "method": "rss",
+      "feed_url": "https://michaeldrogalis.substack.com/feed"
+    },
+    {
+      "name": "Joe Reis",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://joereis.substack.com/feed"
+    },
+    {
+      "name": "benn.substack",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://benn.substack.com/feed"
+    },
+    {
+      "name": "Sanjeev Mohan",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://sanjmo.medium.com/feed"
+    },
+    {
+      "name": "RedMonk Newsletter",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://buttondown.email/redmonk/rss"
+    },
+    {
+      "name": "The Pragmatic Engineer",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://newsletter.pragmaticengineer.com/feed"
+    },
+    {
+      "name": "Agoda Engineering",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://medium.com/feed/agoda-engineering"
+    },
+    {
+      "name": "Airbnb Engineering",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://medium.com/feed/airbnb-engineering"
+    },
+    {
+      "name": "Allegro Tech",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://blog.allegro.tech/feed.xml"
+    },
+    {
+      "name": "Cloudflare Blog",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://blog.cloudflare.com/rss/"
+    },
+    {
+      "name": "Expedia Group Technology",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://medium.com/feed/expedia-group-tech"
+    },
+    {
+      "name": "Grab Tech",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://engineering.grab.com/feed.xml"
+    },
+    {
+      "name": "Pinterest Engineering",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://medium.com/feed/pinterest-engineering"
+    },
+    {
+      "name": "Shopify Engineering",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://shopify.engineering/blog.atom"
+    },
+    {
+      "name": "Riot Games Tech Blog",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://technology.riotgames.com/rss.xml"
+    },
+    {
+      "name": "Sky Betting & Gaming Technology",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://sbg.technology/feed.xml"
+    },
+    {
+      "name": "Unity Blog",
+      "pillar": "Gaming",
+      "method": "scrape",
+      "url": "https://unity.com/blog",
+      "base_url": "https://unity.com",
+      "link_filter": "/blog/",
+      "rank": false
+    },
+    {
+      "name": "Godot Engine Blog",
+      "pillar": "Gaming",
+      "method": "rss",
+      "feed_url": "https://godotengine.org/rss.xml",
+      "rank": false
+    },
+    {
+      "name": "GameDev.net News",
+      "pillar": "Gaming",
+      "method": "scrape",
+      "url": "https://gamedev.net/news/",
+      "base_url": "https://gamedev.net",
+      "link_filter": "/news/",
+      "rank": false
+    },
+    {
+      "name": "Game From Scratch",
+      "pillar": "Gaming",
+      "method": "rss",
+      "feed_url": "https://gamefromscratch.com/feed/",
+      "rank": false
     }
   ],
   "parked_sources": [

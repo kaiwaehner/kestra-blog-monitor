@@ -291,22 +291,27 @@ def format_date(entry):
 CONTROL_RE = re.compile(
     rb"[\x00-\x08\x0b\x0c\x0e-\x1f]|&#x?0*(?:[0-8bcefBCEF]|1[0-9a-fA-F]);"
 )
+# A bare & that does not start a valid entity is the most common way a feed
+# ends up as invalid XML, and stripping control characters alone does not fix it
+BARE_AMP_RE = re.compile(rb"&(?!#\d+;|#x[0-9a-fA-F]+;|[A-Za-z][A-Za-z0-9]*;)")
 
 
 def salvage_feed(feed_url, timeout):
-    """Some publishers emit XML with stray control characters. Download it,
-    strip them, and reparse. Returns None when that does not help either."""
+    """Some publishers emit XML with stray control characters or unescaped
+    ampersands. Download it, repair both, and reparse. Returns None when that
+    does not help either."""
     try:
         status, body, _, _ = http_get(feed_url, timeout)
     except Exception:
         return None
     if status != 200 or not body:
         return None
-    cleaned = CONTROL_RE.sub(b"", body)
+    cleaned = BARE_AMP_RE.sub(b"&amp;", CONTROL_RE.sub(b"", body))
     try:
-        return feedparser.parse(cleaned)
+        parsed = feedparser.parse(cleaned)
     except Exception:
         return None
+    return parsed if parsed.entries else None
 
 
 def fetch_rss(source, st, timeout):

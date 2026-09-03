@@ -301,9 +301,8 @@
       "name": "Tier0 Blog",
       "pillar": "Industrial IoT & Edge",
       "method": "sitemap",
-      "sitemap_url": "https://tier0.app/sitemap.xml",
-      "path_filter": "/blog",
-      "max_index_children": 6
+      "sitemap_url": "https://tier0.app/sitemap_en.xml",
+      "path_filter": "/resource/blogs/"
     },
     {
       "name": "Fivetran Blog",
@@ -904,7 +903,7 @@
       "name": "Matt Turck",
       "pillar": "Enterprise Architecture & Practitioners",
       "method": "rss",
-      "feed_url": "https://mattturck.com/feed/atom/"
+      "feed_url": "https://mattturck.com/feed/"
     },
     {
       "name": "Netflix TechBlog",
@@ -994,8 +993,10 @@
     {
       "name": "Feldera Blog",
       "pillar": "Data Integration & Streaming",
-      "method": "rss",
-      "feed_url": "https://www.feldera.com/blog/rss.xml"
+      "method": "scrape",
+      "url": "https://www.feldera.com/blog",
+      "base_url": "https://www.feldera.com",
+      "link_filter": "/blog/"
     },
     {
       "name": "Analytics Engineering Roundup (dbt)",
@@ -1118,11 +1119,9 @@
     {
       "name": "GameDev.net News",
       "pillar": "Gaming",
-      "method": "scrape",
-      "url": "https://gamedev.net/news/",
-      "base_url": "https://gamedev.net",
-      "link_filter": "/news/",
-      "rank": false
+      "method": "rss",
+      "rank": false,
+      "feed_url": "https://www.gamedev.net/rss/news.xml"
     },
     {
       "name": "Game From Scratch",

@@ -115,10 +115,23 @@ second. A source that connects and then goes silent costs the whole run. The
 health check reports these separately, because they need different responses:
 one is a decision about content, the other is a bug in the fetch loop.
 
-## Setup
+## Requirements
 
-Kestra Enterprise, because this uses Cases. The flows themselves work on OSS if
-you remove the `CreateCase` task.
+Kestra 2.0 or later, Enterprise Edition. Cases are EE only. The flows run on
+OSS if you remove the `CreateCase` task from `source_health.yml`.
+
+The `plugin-kestra` plugin provides `CreateCase` and ships in the 2.0 image.
+Check the Plugins page in the UI before deploying: a missing plugin surfaces
+as an unknown task type rather than anything more helpful.
+
+The Kestra deployment itself is not in this repository. Bring your own
+instance and point `kestra.auth` at it.
+
+Both flows mount a working directory holding `blog_monitor.py`, `config.json`
+and `seen_posts.json`. The `work_dir` input defaults to a path you should
+override for your own environment.
+
+## Setup
 
 ```bash
 cp kestra.auth.example kestra.auth   # fill in host, token, namespace

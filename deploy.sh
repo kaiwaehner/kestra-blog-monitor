@@ -235,15 +235,6 @@ do_check() {
   echo "    auth: OK"
   api GET "$API/flows/$NS/blog_monitor" >/dev/null 2>&1 \
     && echo "    flow: deployed" || echo "    flow: NOT deployed (run ./deploy.sh flow)"
-  local keys
-  keys="$(api GET "$API/namespaces/$NS/kv" || echo "")"
-  echo "    kv keys: $(printf '%s' "$keys" | python3 -c "
-import json,sys
-try:
-    d=json.load(sys.stdin)
-    print(', '.join(x.get('key',str(x)) if isinstance(x,dict) else str(x) for x in d) or 'none')
-except Exception:
-    print('none')" 2>/dev/null)"
 }
 
 case "${1:-all}" in

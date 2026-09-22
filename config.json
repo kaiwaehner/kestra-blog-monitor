@@ -9,8 +9,8 @@
     "model": "claude-sonnet-5",
     "max_items": 20,
     "min_score": 3,
-    "max_candidates": 250,
-    "timeout": 120,
+    "max_candidates": 1000,
+    "timeout": 240,
     "max_per_source": 3,
     "max_tokens": 12000
   },
@@ -29,6 +29,7 @@
     "Process Intelligence & Workflow Orchestration",
     "Trusted Agentic AI",
     "Data Governance & Quality",
+    "Sovereignty & Private Cloud",
     "Industrial IoT & Edge",
     "Enterprise Architecture & Practitioners",
     "DACH, ERP & Analysts",
@@ -1129,6 +1130,177 @@
       "method": "rss",
       "feed_url": "https://gamefromscratch.com/feed/",
       "rank": false
+    },
+    {
+      "name": "STACKIT Blog",
+      "pillar": "Sovereignty & Private Cloud",
+      "method": "rss",
+      "url": "https://www.stackit.de/en/blog/"
+    },
+    {
+      "name": "OVHcloud Blog",
+      "pillar": "Sovereignty & Private Cloud",
+      "method": "rss",
+      "url": "https://blog.ovhcloud.com/",
+      "feed_url": "https://blog.ovhcloud.com/feed/"
+    },
+    {
+      "name": "Scaleway Blog",
+      "pillar": "Sovereignty & Private Cloud",
+      "method": "rss",
+      "url": "https://www.scaleway.com/en/blog/"
+    },
+    {
+      "name": "Nextcloud Blog",
+      "pillar": "Sovereignty & Private Cloud",
+      "method": "rss",
+      "url": "https://nextcloud.com/blog/"
+    },
+    {
+      "name": "Open Telekom Cloud Blog",
+      "pillar": "Sovereignty & Private Cloud",
+      "method": "rss",
+      "url": "https://open-telekom-cloud.com/en/blog"
+    },
+    {
+      "name": "Red Hat Blog",
+      "pillar": "Sovereignty & Private Cloud",
+      "method": "rss",
+      "url": "https://www.redhat.com/en/blog",
+      "feed_url": "https://www.redhat.com/en/rss/blog"
+    },
+    {
+      "name": "SUSE Blog",
+      "pillar": "Sovereignty & Private Cloud",
+      "method": "rss",
+      "url": "https://www.suse.com/c/",
+      "feed_url": "https://www.suse.com/c/feed/"
+    },
+    {
+      "name": "Canonical (Ubuntu) Blog",
+      "pillar": "Sovereignty & Private Cloud",
+      "method": "rss",
+      "url": "https://ubuntu.com/blog",
+      "feed_url": "https://ubuntu.com/blog/feed"
+    },
+    {
+      "name": "Monte Carlo Blog",
+      "pillar": "Data Governance & Quality",
+      "method": "rss",
+      "url": "https://www.montecarlodata.com/blog/"
+    },
+    {
+      "name": "Alation Blog",
+      "pillar": "Data Governance & Quality",
+      "method": "rss",
+      "url": "https://www.alation.com/blog/"
+    },
+    {
+      "name": "Immuta Blog",
+      "pillar": "Data Governance & Quality",
+      "method": "rss",
+      "url": "https://www.immuta.com/blog/"
+    },
+    {
+      "name": "Rockwell Automation Blog",
+      "pillar": "Industrial IoT & Edge",
+      "method": "rss",
+      "url": "https://www.rockwellautomation.com/en-us/company/news/blogs.html"
+    },
+    {
+      "name": "Cognite Blog",
+      "pillar": "Industrial IoT & Edge",
+      "method": "rss",
+      "url": "https://www.cognite.com/en/blog"
+    },
+    {
+      "name": "Tulip Blog",
+      "pillar": "Industrial IoT & Edge",
+      "method": "rss",
+      "url": "https://tulip.co/blog/"
+    },
+    {
+      "name": "Ethan Mollick (One Useful Thing)",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "url": "https://www.oneusefulthing.org/",
+      "feed_url": "https://www.oneusefulthing.org/feed"
+    },
+    {
+      "name": "Nathan Lambert (Interconnects)",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "url": "https://www.interconnects.ai/",
+      "feed_url": "https://www.interconnects.ai/feed"
+    },
+    {
+      "name": "Latent Space (swyx)",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "url": "https://www.latent.space/",
+      "feed_url": "https://www.latent.space/feed"
+    },
+    {
+      "name": "Import AI (Jack Clark)",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "url": "https://importai.substack.com/",
+      "feed_url": "https://importai.substack.com/feed"
+    },
+    {
+      "name": "Chip Huyen",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "url": "https://huyenchip.com/blog/",
+      "feed_url": "https://huyenchip.com/feed.xml"
+    },
+    {
+      "name": "Groq Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "url": "https://groq.com/blog"
+    },
+    {
+      "name": "CrewAI Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "url": "https://blog.crewai.com/"
+    },
+    {
+      "name": "Weights & Biases (Fully Connected)",
+      "pillar": "Trusted Agentic AI",
+      "method": "rss",
+      "url": "https://wandb.ai/fully-connected"
+    },
+    {
+      "name": "Constellation Research (Holger Mueller)",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "url": "https://www.constellationr.com/blog-news"
+    },
+    {
+      "name": "Sam Newman",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "url": "https://samnewman.io/blog/"
+    },
+    {
+      "name": "CMU Database Group (Andy Pavlo)",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "url": "https://db.cs.cmu.edu/news/"
+    },
+    {
+      "name": "United Manufacturing Hub",
+      "pillar": "Industrial IoT & Edge",
+      "method": "rss",
+      "url": "https://learn.umh.app/blog/"
+    },
+    {
+      "name": "IIoT World",
+      "pillar": "Industrial IoT & Edge",
+      "method": "rss",
+      "url": "https://www.iiot-world.com/"
     }
   ],
   "parked_sources": [

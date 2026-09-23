@@ -44,7 +44,7 @@ orchestration means rewriting. It does not.
 
 | File | Purpose |
 |---|---|
-| `blog_monitor_flow.yml` | Phase 1 wrapper. Runs the unmodified script in a container with the working directory mounted. |
+| `blog_monitor_flow.yml` | The wrapper. Runs the unmodified script in a container with the working directory mounted, and holds a Kestra asset lock on `seen_posts.json` while it runs. |
 | `source_health.yml` | Weekly sweep across every source, sequential with a hard budget each. Opens a Kestra Case when sources fail, and attaches itself as a one-click re-check. |
 | `source_check_single.yml` | Probe one source on demand. |
 | `check_sources.py` | The diagnostic. Sequential, bounded, read-only. Reports hung sources, failing sources, and parked sources that have recovered. |
@@ -115,12 +115,38 @@ second. A source that connects and then goes silent costs the whole run. The
 health check reports these separately, because they need different responses:
 one is a decision about content, the other is a bug in the fetch loop.
 
+## One writer for the state file
+
+`seen_posts.json` is the only resource that must never have two writers.
+`concurrency: limit: 1` serialises executions of the flow, but it knows
+nothing about other flows. So the file is registered as a Kestra asset
+(`blog-monitor-seen-posts`, created once in the UI) and the flow takes a write lock on it for the length of the
+run:
+
+- `Acquire` with a TTL of 30 minutes. If another execution holds the lock, the
+  task fails with 423 and its retry waits.
+- `Release` in the flow's `finally` block, so success, failure and timeout all
+  give the file back. The TTL covers the case where nothing runs at all, such
+  as a dead worker.
+- Reads stay open, so the read-only health check needs no lock.
+
+The lock is cooperative: it serialises everything that goes through Kestra. A
+cron job outside Kestra is invisible to it, which is why cron was switched off
+before the cutover.
+
 ## Requirements
 
-Kestra 2.0 or later, Enterprise Edition. Cases are EE only. The flows run on
-OSS if you remove the `CreateCase` task from `source_health.yml`.
+Kestra 2.0 or later, Enterprise Edition. Cases and asset locks are EE only. The
+flows run on OSS if you remove the `CreateCase` task from `source_health.yml`
+and the `acquire_state_lock` and `release_state_lock`
+tasks from `blog_monitor_flow.yml`.
 
-The `plugin-kestra` plugin provides `CreateCase` and ships in the 2.0 image.
+The `KESTRA_API_TOKEN` secret needs the `LOCK` and `UNLOCK` permissions on the
+`ASSET` resource. A 403 from `Acquire` means the permission is missing, not
+that the lock is taken.
+
+The `plugin-kestra` plugin provides `CreateCase`, `Acquire` and `Release`. The
+lock tasks need a plugin version from September 2026 or later.
 Check the Plugins page in the UI before deploying: a missing plugin surfaces
 as an unknown task type rather than anything more helpful.
 
@@ -159,11 +185,12 @@ variables in preference to `.env`, so Kestra's secrets win.
 
 Things that cost time and are not obvious from the docs:
 
-- Input type `BOOLEAN` does not exist. Use `SELECT` with two values, which also
-  gives you a dropdown instead of a field a typo can silently break.
+- A boolean input is `BOOL` (a toggle). `BOOLEAN` is deprecated. For a mode
+  like dry-run versus send, a `SELECT` with two named values reads better
+  than a toggle anyway.
 - Retry is `maxAttempts`, not `maxAttempt`.
-- Pebble has no `?:` operator. Use `??`, and note it only fires on null, not on
-  an empty string.
+- Pebble has the ternary `a ? b : c`, but not the `?:` shorthand. For
+  defaults use `??`, and note it only fires on null, not on an empty string.
 - Case actions in 2.0 take no inputs and fire immediately, so any flow attached
   as an action must have defaults for every input.
 - Dashboard charts group by metric **name** only, not by metric tags. Every

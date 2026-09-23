@@ -1,15 +1,11 @@
 #!/usr/bin/env bash
-# Deploy the AI visibility tracker from Dropbox to Kestra on the Beelink.
+# Deploy the blog monitor flows to a Kestra instance.
 #
-#   ./deploy.sh              deploy every flow, then seed the prompt sets
+#   ./deploy.sh              deploy every flow and dashboard
 #   ./deploy.sh flow         deploy every *.yml flow in this folder
 #   ./deploy.sh dashboard    create the custom dashboards
-#   ./deploy.sh run          trigger a tracker run (Claude only)
+#   ./deploy.sh run          trigger a dry run of blog_monitor (no mail, no state)
 #   ./deploy.sh check        verify auth and list what is deployed
-#
-# Prompt sets are seeded by running the bootstrap_prompts flow rather than
-# calling the KV API directly: the API token is denied KV, but a flow runs
-# server-side with full namespace access.
 #
 # Auth lives in a local kestra.auth file next to this script:
 #
@@ -22,8 +18,8 @@
 #   KESTRA_PASS=yourpassword
 #   TENANT=main
 #
-# The LLM API keys are NOT here. On EE they live in the namespace secret
-# store; on OSS they come from SECRET_* env vars on the server.
+# The API keys are NOT here. On EE they live in the namespace secret store;
+# on OSS they come from SECRET_* env vars on the server.
 
 set -euo pipefail
 
@@ -203,23 +199,10 @@ push_dashboards() {
   [ "$found" -eq 1 ] || echo "    no dashboard files found"
 }
 
-seed_prompts() {
-  say "Running bootstrap_prompts to seed the KV store"
-  local out id
-  out="$(api POST "$API/executions/$NS/bootstrap_prompts")"
-  id="$(printf '%s' "$out" | python3 -c "import json,sys;print(json.load(sys.stdin)['id'])" 2>/dev/null || echo "")"
-  echo "    execution ${id:-started}"
-  echo "    $KESTRA/ui/$TENANT/executions"
-}
-
-
-
-
 trigger_run() {
-  say "Triggering a Claude-only run"
+  say "Triggering a dry run of blog_monitor"
   local out id
-  out="$(api POST "$API/executions/$NS/blog_monitor" \
-          -F "article=oceanbase" -F 'engines=["anthropic"]')"
+  out="$(api POST "$API/executions/$NS/blog_monitor" -F "mode=dry-run")"
   id="$(printf '%s' "$out" | python3 -c "import json,sys;print(json.load(sys.stdin)['id'])" 2>/dev/null || echo "")"
   if [ -n "$id" ]; then
     echo "    execution $id"

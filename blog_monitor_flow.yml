@@ -31,6 +31,9 @@ labels:
 # The script has no lock of its own: two runs writing seen_posts.json at the
 # same time means last writer wins. QUEUE holds a second execution until the
 # first finishes instead of letting them race.
+#
+# This only covers executions of THIS flow. The asset lock further down covers
+# any flow that writes the state file, and it expires on its own if a run dies.
 concurrency:
   limit: 1
   behavior: QUEUE
@@ -60,20 +63,50 @@ inputs:
       same time, which is why cron is disabled first and the flow second.
 
 tasks:
+  # One writer at a time, across flows and workers. If another execution holds
+  # the lock, Acquire fails with 423 and the retry waits for it. The TTL is the
+  # safety net: a run that hangs or a worker that dies gives the file back when
+  # the lease expires instead of holding it forever. 30 minutes covers the
+  # 15-minute task timeout plus container start with room to spare.
+  #
+  # The API token needs LOCK and UNLOCK on the ASSET resource. A 403 here means
+  # the token is missing that permission, not that the lock is taken.
+  - id: acquire_state_lock
+    type: io.kestra.plugin.kestra.ee.locks.Acquire
+    assetId: blog-monitor-seen-posts
+    ttl: PT30M
+    auth:
+      apiToken: "{{ secret('KESTRA_API_TOKEN') }}"
+    retry:
+      type: constant
+      interval: PT1M
+      maxAttempts: 20
+
   - id: run_monitor
     type: io.kestra.plugin.scripts.python.Commands
-    description: Run the unmodified script against the parallel directory
+    description: Run the unmodified script against the production directory
     containerImage: python:3.13-slim
 
-    # A healthy run is 3-5 minutes. Longer runs are not slow runs: the script
-    # fetches 129 sources through a ThreadPoolExecutor and waits on
-    # as_completed() with no timeout, so a single source that opens a TCP
-    # connection and then goes silent blocks the whole run indefinitely. A
-    # socket timeout does not help because it restarts on every byte.
+    # A healthy run is 3-5 minutes. The script fetches every source through a
+    # ThreadPoolExecutor. Before the fix it waited on as_completed() with no
+    # timeout, so a single source that opens a TCP connection and then goes
+    # silent blocked the whole run. A socket timeout does not help because it
+    # restarts on every byte. The fetch loop now has a 120-second total budget
+    # and reports abandoned sources instead of waiting on them.
     #
-    # 15 minutes therefore means "something is stuck", not "today was busy".
-    # The root cause belongs in Phase 4 as a timeout on as_completed().
+    # The 15-minute timeout stays as the backstop: it means "something is
+    # stuck", not "today was busy".
     timeout: PT15M
+
+    # Declares the write for lineage and freshness. The execution holding the
+    # lock may write the asset, and each write extends the lease.
+    assets:
+      outputs:
+        - id: blog-monitor-seen-posts
+          type: io.kestra.plugin.ee.assets.File
+          metadata:
+            system: blog-monitor
+            path: "{{ inputs.work_dir }}/seen_posts.json"
 
     # No retry. A retry re-runs the whole script, which can cost the better part
     # of an hour, and the failure modes worth retrying (a single flaky source)
@@ -113,6 +146,16 @@ tasks:
     message: |
       Blog monitor finished. mode={{ inputs.mode }}, dir={{ inputs.work_dir }}
       Preview and log are on the Outputs tab.
+
+# Release runs whatever happened above: success, failure, or timeout. It is
+# owner-checked and a no-op if the lock already expired, so it is safe to run
+# unconditionally.
+finally:
+  - id: release_state_lock
+    type: io.kestra.plugin.kestra.ee.locks.Release
+    assetId: blog-monitor-seen-posts
+    auth:
+      apiToken: "{{ secret('KESTRA_API_TOKEN') }}"
 
 triggers:
   - id: daily

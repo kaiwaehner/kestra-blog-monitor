@@ -23,7 +23,7 @@ description: |
 
   This flow is also attached to the case as its own Case Action, so a one-click
   re-check answers the question the case has: what is still broken, and has a
-  parked source come back? That works because both inputs here have defaults.
+  parked source come back? That works because every input here has a default.
   Case actions in rc10 fire immediately with no execute form, so any flow with
   a required input fails with 422 Missing required input.
 
@@ -43,13 +43,6 @@ inputs:
       Points at the production directory since the phase 3 cutover. The parallel
       copy is gone. The check is read-only, so sharing the directory is safe: it
       never writes state and never sends mail.
-
-  - id: case_assignee
-    type: STRING
-    defaults: you@example.com
-    description: |
-      Who owns the case. Must be a real user in this Kestra instance, otherwise
-      CreateCase rejects it: assignment needs at least one user or group.
 
   - id: per_source_timeout
     type: INT
@@ -119,9 +112,12 @@ tasks:
       Full detail on the execution's Outputs tab as `summary.json`. Each week
       attaches to this same case, so the linked executions are the history.
 
+    # The owner comes from the secret store, like the mail addresses: a
+    # placeholder default here made CreateCase fail with "User not found".
+    # The value must be a real user of this Kestra instance.
     assignees:
       users:
-        - "{{ inputs.case_assignee }}"
+        - "{{ secret('BLOG_MONITOR_CASE_ASSIGNEE') }}"
 
     sla:
       acknowledgement: P3D

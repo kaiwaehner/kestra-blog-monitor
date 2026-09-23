@@ -1290,6 +1290,16 @@ def main():
             notes.append(rank_note)
             print(f"[RANK] {rank_note}")
 
+    # Kestra reads this marker from stdout as outputs.run_monitor.vars.*. A
+    # failed ranking is not a failed run: the digest still goes out, only
+    # without Top News. Whether that deserves a case is the flow's decision.
+    # Outside Kestra the line is just one more line of log.
+    print("::" + json.dumps({"outputs": {
+        "ranking_ok": not (rank_note or "").startswith(("ranking failed", "no Anthropic API key")),
+        "rank_note": rank_note or "",
+        "new_posts": len(new_posts),
+    }}) + "::")
+
     if promotions:
         notes.append(f"{len(promotions)} feed(s) autodiscovered, "
                      f"move them into config.json")

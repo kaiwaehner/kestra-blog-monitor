@@ -134,6 +134,26 @@ The lock is cooperative: it serialises everything that goes through Kestra. A
 cron job outside Kestra is invisible to it, which is why cron was switched off
 before the cutover.
 
+## Alerting
+
+A red execution in a list nobody opens at eight in the morning is not an
+alarm. The flow covers three failure classes, one mechanism each:
+
+| Failure class | Example | Detected by | Who gets told |
+|---|---|---|---|
+| Run fails | Gmail rejects the login | `errors` block | Case (Medium) plus alert mail |
+| Run succeeds, quality drops | Ranking fails, no Top News | Script reports `ranking_ok`, flow evaluates it | Case (Low), no mail |
+| Run never happens | Queued, trigger off, machine down | External heartbeat, no ping by 08:45 | Mail from the heartbeat service |
+
+The alert mail takes its credentials from the secret store, not from
+`config.json`, so a configuration mistake in the digest cannot silence the
+alert about it. The heartbeat runs outside the machine on purpose: nothing on
+the mini PC can report that the mini PC is off.
+
+Heartbeat setup: create a free check at healthchecks.io with the schedule
+`0 8 * * *`, time zone Europe/Berlin and a grace time of 45 minutes, then store
+its ping URL as the `HEARTBEAT_URL` secret. Only send runs ping.
+
 ## Requirements
 
 Kestra 2.0 or later, Enterprise Edition. Cases and asset locks are EE only. The
@@ -175,7 +195,8 @@ chmod 644 ~/blog_monitor_kestra/*
 ```
 
 Then add `ANTHROPIC_API_KEY`, `BLOG_MONITOR_PASSWORD`, `BLOG_MONITOR_SENDER`,
-`BLOG_MONITOR_RECIPIENT` and `KESTRA_API_TOKEN` as namespace secrets. The mail
+`BLOG_MONITOR_RECIPIENT`, `BLOG_MONITOR_CASE_ASSIGNEE` (a Kestra user email),
+`HEARTBEAT_URL` and `KESTRA_API_TOKEN` as namespace secrets. The mail
 addresses are environment, not configuration: `config.json` in this repository
 carries placeholders and can be deployed as-is. A send run with placeholder
 addresses fails before it fetches anything. No `.env` file is needed: the script reads real environment

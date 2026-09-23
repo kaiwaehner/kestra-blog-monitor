@@ -141,11 +141,102 @@ tasks:
     outputFiles:
       - preview.html
 
+  # WARNING, NOT FAILURE. A digest without ranking still goes out, so the run
+  # stays green. The script reports ranking_ok on stdout, and a failed ranking
+  # (credits used up, invalid key, retired model) opens a low-severity case
+  # instead of a mail. One case per task id: repeats attach to the open case.
+  - id: open_degraded_case
+    type: io.kestra.plugin.kestra.ee.cases.CreateCase
+    runIf: "{{ (outputs.run_monitor.vars.ranking_ok ?? true) == false }}"
+    auth:
+      apiToken: "{{ secret('KESTRA_API_TOKEN') }}"
+    title: "Blog monitor degraded"
+    severity: LOW
+    linkMatchingExecutions: true
+    caseDescription: |
+      The run finished, but the ranking failed, so the digest had no Top News.
+
+      Reason reported by the script: {{ outputs.run_monitor.vars.rank_note }}
+
+      Typical causes: Anthropic credits used up, an invalid API key, or a model
+      name the API no longer accepts.
+    assignees:
+      users:
+        - "{{ secret('BLOG_MONITOR_CASE_ASSIGNEE') }}"
+    sla:
+      acknowledgement: P7D
+      resolution: P30D
+
   - id: summary
     type: io.kestra.plugin.core.log.Log
     message: |
       Blog monitor finished. mode={{ inputs.mode }}, dir={{ inputs.work_dir }}
       Preview and log are on the Outputs tab.
+
+  # HEARTBEAT. Only a watcher outside this machine can report that the
+  # machine, Kestra, or the schedule is gone: an errors block cannot fire for
+  # an execution that was never created. healthchecks.io expects one ping a
+  # day and mails when it is late. Only send runs ping, so dry runs and tests
+  # never count as a delivered digest. allowFailure: an unreachable heartbeat
+  # service must not turn a delivered digest into a failure alert.
+  - id: heartbeat
+    type: io.kestra.plugin.core.http.Request
+    runIf: "{{ inputs.mode == 'send' }}"
+    allowFailure: true
+    uri: "{{ secret('HEARTBEAT_URL') }}"
+    method: GET
+
+# FAILURE ALERT. Runs when any task above fails. The case is the record, the
+# mail is the push. The mail task takes its credentials straight from the
+# secret store, so a broken config.json cannot silence the alert about it. It
+# still shares the Gmail account with the digest; the heartbeat covers the
+# case where Gmail itself is the problem.
+errors:
+  - id: open_failure_case
+    type: io.kestra.plugin.kestra.ee.cases.CreateCase
+    allowFailure: true
+    auth:
+      apiToken: "{{ secret('KESTRA_API_TOKEN') }}"
+    title: "Blog monitor run failed"
+    severity: MEDIUM
+    linkMatchingExecutions: true
+    caseDescription: |
+      Execution {{ execution.id }} failed (mode {{ inputs.mode }}).
+
+      If it failed before the mail went out, no digest arrived and the state
+      was not saved. The next successful run then delivers everything since the
+      last digest, so nothing is lost.
+
+      Error logs:
+      {% for l in errorLogs() %}
+      - {{ l.taskId }}: {{ l.message }}
+      {% endfor %}
+    assignees:
+      users:
+        - "{{ secret('BLOG_MONITOR_CASE_ASSIGNEE') }}"
+    sla:
+      acknowledgement: P1D
+      resolution: P7D
+
+  - id: alert_mail
+    type: io.kestra.plugin.email.MailSend
+    from: "{{ secret('BLOG_MONITOR_SENDER') }}"
+    to: "{{ secret('BLOG_MONITOR_RECIPIENT') }}"
+    username: "{{ secret('BLOG_MONITOR_SENDER') }}"
+    password: "{{ secret('BLOG_MONITOR_PASSWORD') }}"
+    host: smtp.gmail.com
+    port: 465
+    transportStrategy: SMTPS
+    subject: "Blog Monitor FAILED ({{ inputs.mode }}): {{ execution.id }}"
+    htmlTextContent: |
+      <p>The blog monitor run <b>{{ execution.id }}</b> failed in mode <b>{{ inputs.mode }}</b>.</p>
+      <p>If it failed before sending, no digest went out and the state was not
+      saved. The next successful run delivers everything, nothing is lost.</p>
+      <p>Error logs:</p>
+      <ul>
+      {% for l in errorLogs() %}<li><b>{{ l.taskId }}</b>: {{ l.message }}</li>
+      {% endfor %}</ul>
+      <p>The execution and an open case are in Kestra.</p>
 
 # Release runs whatever happened above: success, failure, or timeout. It is
 # owner-checked and a no-op if the lock already expired, so it is safe to run

@@ -22,6 +22,8 @@ Changes vs v1
 Environment
 -----------
 BLOG_MONITOR_PASSWORD   Gmail app password (required)
+BLOG_MONITOR_SENDER     Gmail address that sends the digest (overrides config.json)
+BLOG_MONITOR_RECIPIENT  Address that receives the digest (overrides config.json)
 ANTHROPIC_API_KEY       Anthropic API key (optional, ranking is skipped without it)
 """
 
@@ -1054,23 +1056,42 @@ def build_html_email(posts, ranked, errors, notes, pillar_order, stats):
     </body></html>"""
 
 
+def mail_addresses(config):
+    """Sender and recipient, environment first, config.json as fallback.
+
+    The addresses are environment, not configuration: the repository copy of
+    config.json carries placeholders on purpose. Once, deploying that copy over
+    production made Gmail reject the login ("Username and Password not
+    accepted") after the whole run had already fetched and ranked. So the
+    placeholders are rejected up front, before any work is done.
+    """
+    cfg       = config.get("email", {})
+    sender    = os.environ.get("BLOG_MONITOR_SENDER", cfg.get("sender", "")).strip()
+    recipient = os.environ.get("BLOG_MONITOR_RECIPIENT", cfg.get("recipient", "")).strip()
+    for label, value in (("sender", sender), ("recipient", recipient)):
+        if not value or value.startswith("you@") or value.endswith("@example.com"):
+            raise RuntimeError(
+                f"mail {label} is {value!r}, a placeholder. Set BLOG_MONITOR_"
+                f"{label.upper()} or the email block in config.json")
+    return sender, recipient
+
+
 def send_email(config, subject, html_body):
-    cfg      = config["email"]
-    sender   = os.environ.get("BLOG_MONITOR_SENDER", cfg["sender"])
+    sender, recipient = mail_addresses(config)
     password = os.environ.get("BLOG_MONITOR_PASSWORD")
     if not password:
         raise RuntimeError("BLOG_MONITOR_PASSWORD is not set, see .env")
 
     msg = MIMEMultipart("alternative")
     msg["From"]    = sender
-    msg["To"]      = cfg["recipient"]
+    msg["To"]      = recipient
     msg["Subject"] = subject
     msg.attach(MIMEText(html_body, "html", "utf-8"))
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=60) as server:
         server.login(sender, password)
-        server.sendmail(sender, cfg["recipient"], msg.as_string())
-    print(f"[INFO] Email sent to {cfg['recipient']}")
+        server.sendmail(sender, recipient, msg.as_string())
+    print(f"[INFO] Email sent to {recipient}")
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -1100,6 +1121,15 @@ def main():
     keep        = settings.get("state_keep_per_source", 250)
     notify_days = settings.get("error_notify_days", 7)
     dry_run     = "--dry-run" in sys.argv
+
+    # Fail before fetching and ranking, not after: a send run with placeholder
+    # addresses can only end in a rejected login.
+    if not dry_run:
+        try:
+            mail_addresses(config)
+        except RuntimeError as e:
+            print(f"[ERROR] {e}")
+            sys.exit(1)
 
     state   = load_state()
     sources = config["sources"]

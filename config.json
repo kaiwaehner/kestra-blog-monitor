@@ -2,7 +2,7 @@
   "email": {
     "sender": "you@gmail.com",
     "recipient": "you@example.com",
-    "_comment": "Credentials live in .env, never in this file: BLOG_MONITOR_PASSWORD and ANTHROPIC_API_KEY"
+    "_comment": "Placeholders on purpose. Real addresses come from BLOG_MONITOR_SENDER and BLOG_MONITOR_RECIPIENT (Kestra secrets or .env), credentials from BLOG_MONITOR_PASSWORD and ANTHROPIC_API_KEY"
   },
   "ranking": {
     "enabled": true,

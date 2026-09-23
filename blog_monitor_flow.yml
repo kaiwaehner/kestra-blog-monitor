@@ -91,6 +91,10 @@ tasks:
     env:
       ANTHROPIC_API_KEY: "{{ secret('ANTHROPIC_API_KEY') }}"
       BLOG_MONITOR_PASSWORD: "{{ secret('BLOG_MONITOR_PASSWORD') }}"
+      # The addresses are environment, not configuration. With these set, the
+      # repository config.json (placeholder addresses) can be deployed as-is.
+      BLOG_MONITOR_SENDER: "{{ secret('BLOG_MONITOR_SENDER') }}"
+      BLOG_MONITOR_RECIPIENT: "{{ secret('BLOG_MONITOR_RECIPIENT') }}"
     commands:
       # No cd needed: the script derives every path from Path(__file__).parent,
       # so config, state and preview all resolve inside /work regardless of the

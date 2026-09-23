@@ -148,8 +148,11 @@ cp ~/blog_monitor/{blog_monitor.py,config.json,seen_posts.json} ~/blog_monitor_k
 chmod 644 ~/blog_monitor_kestra/*
 ```
 
-Then add `ANTHROPIC_API_KEY`, `BLOG_MONITOR_PASSWORD` and `KESTRA_API_TOKEN` as
-namespace secrets. No `.env` file is needed: the script reads real environment
+Then add `ANTHROPIC_API_KEY`, `BLOG_MONITOR_PASSWORD`, `BLOG_MONITOR_SENDER`,
+`BLOG_MONITOR_RECIPIENT` and `KESTRA_API_TOKEN` as namespace secrets. The mail
+addresses are environment, not configuration: `config.json` in this repository
+carries placeholders and can be deployed as-is. A send run with placeholder
+addresses fails before it fetches anything. No `.env` file is needed: the script reads real environment
 variables in preference to `.env`, so Kestra's secrets win.
 
 ## Notes for anyone doing the same

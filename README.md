@@ -2,6 +2,8 @@
 
 Wrapping a working Python script in [Kestra](https://kestra.io) without rewriting it.
 
+The full story is in the blog post [From Cron Batch Jobs to Kestra: Migrating a Python Script Without a Rewrite](https://www.kai-waehner.de/blog/2026/09/24/from-cron-batch-jobs-to-kestra-migrating-a-python-script-without-a-rewrite/).
+
 A script checks ~130 blog sources once a day, ranks new posts with Claude, and
 sends one grouped email. It worked fine as a cron job. This repository is the
 record of moving it onto an orchestration platform, and of what that surfaced.

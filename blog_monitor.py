@@ -792,6 +792,7 @@ def rank_posts(posts, cfg):
     payload = {
         "model": cfg.get("model", "claude-sonnet-5"),
         "max_tokens": cfg.get("max_tokens", 8000),
+        "thinking": cfg.get("thinking", {"type": "disabled"}),
         "system": RANKING_SYSTEM,
         "messages": [{"role": "user", "content": user}],
     }
@@ -1295,7 +1296,12 @@ def main():
     # without Top News. Whether that deserves a case is the flow's decision.
     # Outside Kestra the line is just one more line of log.
     print("::" + json.dumps({"outputs": {
-        "ranking_ok": not (rank_note or "").startswith(("ranking failed", "no Anthropic API key")),
+        "ranking_ok": not (rank_note or "").startswith((
+            "ranking failed",
+            "no Anthropic API key",
+            "ranking response was cut off",
+            "ranking returned no usable JSON",
+        )),
         "rank_note": rank_note or "",
         "new_posts": len(new_posts),
     }}) + "::")

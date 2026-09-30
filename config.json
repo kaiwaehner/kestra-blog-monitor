@@ -275,6 +275,14 @@
       "link_filter": "/blog/"
     },
     {
+      "name": "ToddySoft Blog",
+      "pillar": "Industrial IoT & Edge",
+      "method": "scrape",
+      "url": "https://toddysoft.com/blog/",
+      "base_url": "https://toddysoft.com",
+      "link_filter": "/blog/"
+    },
+    {
       "name": "AVEVA Blog",
       "pillar": "Industrial IoT & Edge",
       "method": "scrape",

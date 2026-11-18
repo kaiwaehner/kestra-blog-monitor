@@ -35,6 +35,7 @@ import smtplib
 import socket
 import sys
 import time
+import traceback
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -1342,12 +1343,22 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
     # A thread stuck in a socket read cannot be cancelled, and Python joins every
-    # non-daemon thread at interpreter exit. Without this the process would hang
-    # after the mail was already sent and the state already written, which under
-    # an orchestrator means a task that never finishes and eventually times out,
-    # reported as a failure despite the work having succeeded.
+    # non-daemon thread at interpreter exit. Without os._exit the process would
+    # hang after the work was done, which under an orchestrator means a task that
+    # never finishes and eventually times out.
+    #
+    # That applies to the failure paths too: sys.exit(1) after a failed mail, or
+    # any uncaught exception, would otherwise wait for the abandoned threads and
+    # turn a clear error into a timeout fifteen minutes later.
+    code = 0
+    try:
+        main()
+    except SystemExit as e:
+        code = e.code if isinstance(e.code, int) else (0 if e.code is None else 1)
+    except BaseException:
+        traceback.print_exc()
+        code = 1
     sys.stdout.flush()
     sys.stderr.flush()
-    os._exit(0)
+    os._exit(code)

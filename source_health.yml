@@ -24,7 +24,7 @@ description: |
   This flow is also attached to the case as its own Case Action, so a one-click
   re-check answers the question the case has: what is still broken, and has a
   parked source come back? That works because every input here has a default.
-  Case actions in rc10 fire immediately with no execute form, so any flow with
+  Case actions in Kestra 2.0 fire immediately with no execute form, so any flow with
   a required input fails with 422 Missing required input.
 
 labels:
@@ -49,8 +49,8 @@ inputs:
     defaults: 20
     description: |
       Seconds allowed per source. Sources with their own timeout in config.json
-      keep theirs. A full sequential pass over 127 healthy sources takes about
-      two minutes, so this only bites on genuinely stuck sources.
+      keep theirs. A healthy source answers in a few seconds, so this only
+      bites on genuinely stuck sources.
 
 tasks:
   - id: check
@@ -99,9 +99,9 @@ tasks:
 
       **Why hanging matters more than failing.** A source returning 403 costs a
       fraction of a second. A source that opens a TCP connection and then goes
-      silent blocks the entire digest run, because blog_monitor.py waits on
-      as_completed() with no timeout and a socket timeout restarts on every
-      byte. Two such sources turned a four minute run into fifty.
+      silent holds the digest until its 120-second fetch budget runs out,
+      because a socket timeout restarts on every byte. Before that budget
+      existed, two such sources turned a four minute run into fifty.
 
       **Sources marked (parked)** are already excluded from the digest and live
       in `parked_sources` in config.json. They stay measured here so a retired
@@ -124,7 +124,7 @@ tasks:
       resolution: P30D
 
     # Attach this same flow as a one-click re-check. Case actions take no
-    # inputs in rc10 and fire immediately, which works here only because both
+    # inputs in Kestra 2.0 and fire immediately, which works here only because both
     # inputs of this flow have defaults.
     actions:
       - label: Re-check all sources
@@ -148,8 +148,7 @@ triggers:
   - id: weekly
     type: io.kestra.plugin.core.trigger.Schedule
     description: |
-      Monday 07:00, before both the production cron at 08:00 and the parallel
-      dry run at 10:00. A stuck source is then already visible as a case by the
-      time the digest runs into it.
+      Monday 07:00, an hour before the daily digest at 08:00. A stuck source is
+      then already visible as a case by the time the digest runs into it.
     cron: "0 7 * * 1"
     timezone: Europe/Berlin

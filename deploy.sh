@@ -91,7 +91,7 @@ api() {
          warn "  $method $url"
          warn "The API token needs permission for this resource."
          warn "In the UI: your user menu, API Tokens, or check the role"
-         warn "attached to your account for KV / FLOW / EXECUTION access." ;;
+         warn "attached to your account for FLOW / EXECUTION access." ;;
     404) warn "HTTP 404 - not found. Wrong tenant ('$TENANT') or namespace?" ;;
     409) warn "HTTP 409 - already exists." ;;
     *)   warn "HTTP $code from $method $url" ;;

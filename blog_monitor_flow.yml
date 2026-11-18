@@ -2,18 +2,18 @@ id: blog_monitor
 namespace: kaiwaehner.blog
 
 description: |
-  Phase 1 of the blog monitor migration: the existing Python script runs
-  unchanged inside Kestra.
+  The blog monitor script runs inside Kestra, wrapped rather than rewritten.
 
-  Nothing about blog_monitor.py is modified. Kestra provides the schedule,
-  retries, run history, and secrets. The script keeps its own fetching,
-  ranking, state handling and mail sending.
+  Kestra provides the schedule, timeout, run history, secrets, the state lock
+  and alerting. The script keeps its own fetching, ranking, state handling and
+  mail sending. Its only changes since the migration are the ones Kestra made
+  visible: a total fetch budget, a ranking_ok output, and a hard exit.
 
   PATHS. The script resolves every path from its own directory
   (BASE_DIR = Path(__file__).parent), so pointing work_dir somewhere else is
   enough to switch which config.json, seen_posts.json and preview.html it uses.
-  During phase 2 that gave a parallel copy with its own state; in phase 3 it is
-  how the flow takes over the production directory without copying anything.
+  During the migration that gave a parallel copy with its own state; since the
+  cutover it points at the production directory.
 
   SECRETS. load_env() uses os.environ.setdefault, so environment variables
   injected here take priority over any .env file. No .env is needed.
@@ -47,20 +47,19 @@ inputs:
       - send
     description: |
       dry-run writes preview.html and sends no mail, leaving the state file
-      untouched. Keep this during parallel validation. Switch to send only once
-      the preview matches what the production cron job produced.
+      untouched. Use it for testing; the schedule always sends.
 
   - id: work_dir
     type: STRING
     defaults: /home/kaiwaehner/blog_monitor
     description: |
-      Phase 3: this now points at the production directory, and the cron job
-      that used to own it is commented out.
+      The production directory. Kestra has been its only writer since the
+      cutover; the cron job that used to own it is gone.
 
       Pointing at the same directory rather than copying state across is what
-      makes the cutover exactly-once. One state file, one writer, no gap and no
-      overlap. The only way to break that is to let cron and Kestra run at the
-      same time, which is why cron is disabled first and the flow second.
+      made the cutover exactly-once. One state file, one writer, no gap and no
+      overlap. The only way to break that is a second writer outside Kestra,
+      such as a cron job, which the asset lock cannot see.
 
 tasks:
   # One writer at a time, across flows and workers. If another execution holds
@@ -111,15 +110,14 @@ tasks:
     # No retry. A retry re-runs the whole script, which can cost the better part
     # of an hour, and the failure modes worth retrying (a single flaky source)
     # are already handled inside the script with three attempts and backoff.
-    # A failed run simply means today's comparison is missing, and the next
-    # scheduled run picks everything up because dry runs never advance state.
+    # A failed run sends nothing and saves no state, so the next scheduled run
+    # delivers everything since the last digest.
     taskRunner:
       type: io.kestra.plugin.scripts.runner.docker.Docker
       volumes:
         - "{{ inputs.work_dir }}:/work"
     beforeCommands:
-      # feedparser is the script's only third-party dependency. The venv on the
-      # Beelink was built against the host Python and is not reused here.
+      # feedparser is the script's only third-party dependency.
       - pip install --quiet --no-cache-dir feedparser
     env:
       ANTHROPIC_API_KEY: "{{ secret('ANTHROPIC_API_KEY') }}"
@@ -134,9 +132,7 @@ tasks:
       # working directory. That leaves Kestra's working dir free for outputs.
       - "python -u /work/blog_monitor.py {{ inputs.mode == 'dry-run' ? '--dry-run' : '' }}"
       # Surface the preview in the UI. Optional: a send run writes none.
-      # monitor.log is deliberately not captured. That file is produced by the
-      # cron job's shell redirect, not by the script, so there is nothing to
-      # read here. Kestra's own task log is the better record anyway.
+      # Kestra's own task log is the run record.
       - "cp /work/preview.html . 2>/dev/null || true"
     outputFiles:
       - preview.html
@@ -252,8 +248,9 @@ triggers:
   - id: daily
     type: io.kestra.plugin.core.trigger.Schedule
     description: |
-      08:00, the slot the cron job used to hold. Cron is commented out rather
-      than deleted, so a rollback is one crontab command.
+      08:00, the slot the cron job used to hold. The cron job was kept
+      commented out for rollback during the migration and has since been
+      removed.
 
       During the parallel phase this ran at 10:00 and was pinned to dry-run.
       08:30 had been too close: on a busy morning the cron run took 50 minutes,

@@ -4,7 +4,7 @@ Wrapping a working Python script in [Kestra](https://kestra.io) without rewritin
 
 The full story is in the blog post [From Cron Batch Jobs to Kestra: Migrating a Python Script Without a Rewrite](https://www.kai-waehner.de/blog/2026/09/24/from-cron-batch-jobs-to-kestra-migrating-a-python-script-without-a-rewrite/).
 
-A script checks ~130 blog sources once a day, ranks new posts with Claude, and
+A script checks ~170 blog sources once a day, ranks new posts with Claude, and
 sends one grouped email. It worked fine as a cron job. This repository is the
 record of moving it onto an orchestration platform, and of what that surfaced.
 
@@ -97,6 +97,11 @@ that means a successful run reported as a timeout failure. Verified in an
 isolated test: the logic finished in 2 seconds and the process still had to be
 killed.
 
+The hard exit has to cover the failure paths too. The first version only ran
+after a successful `main()`, so `sys.exit(1)` after a failed mail still waited
+for the abandoned threads, and a clear error became a timeout fifteen minutes
+later. The script now catches the exit code and passes it to `os._exit`.
+
 Measured, same scenario with two deliberately silent sources:
 
 | | Result |
@@ -175,7 +180,7 @@ as an unknown task type rather than anything more helpful.
 The Kestra deployment itself is not in this repository. Bring your own
 instance and point `kestra.auth` at it.
 
-Both flows mount a working directory holding `blog_monitor.py`, `config.json`
+All three flows mount a working directory holding `blog_monitor.py`, `config.json`
 and `seen_posts.json`. The `work_dir` input defaults to a path you should
 override for your own environment.
 

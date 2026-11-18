@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """Check every source in config.json one at a time and report how long it takes.
 
-Why this exists: blog_monitor.py fetches all sources through a
-ThreadPoolExecutor and waits on as_completed() with no timeout. A single source
-that opens a TCP connection and then goes silent blocks the entire run
-indefinitely. A socket timeout does not save you, because it restarts on every
-byte received, so a server that trickles one byte a minute holds the socket open
-forever.
+Why this exists: blog_monitor.py fetches all sources in parallel. A source that
+opens a TCP connection and then goes silent used to block the entire run, and
+still holds it until the 120-second fetch budget runs out. A socket timeout
+does not save you, because it restarts on every byte received, so a server that
+trickles one byte a minute holds the socket open forever.
 
-This script does the opposite: strictly sequential, one hard deadline per
-source, enforced from outside the request with a watchdog thread. Slow sources
-are reported, hung sources are abandoned, and the run always finishes.
+This script does the opposite: strictly sequential, one budget per source. The
+socket timeout caps each read, and the budget is checked between reads, so a
+probe takes at most about twice its budget. Slow sources are reported, hung
+sources are abandoned, and the run always finishes.
 
 It never writes state and never sends mail. Safe to run at any time.
 

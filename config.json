@@ -55,12 +55,6 @@
       "feed_url": "https://feed.infoq.com/"
     },
     {
-      "name": "The New Stack",
-      "pillar": "Enterprise Architecture & Practitioners",
-      "method": "rss",
-      "feed_url": "https://thenewstack.io/feed/"
-    },
-    {
       "name": "Thoughtworks Insights",
       "pillar": "Enterprise Architecture & Practitioners",
       "method": "rss",
@@ -299,18 +293,10 @@
       "link_filter": "/blog/"
     },
     {
-      "name": "United Manufacturing Hub Blog",
-      "pillar": "Industrial IoT & Edge",
-      "method": "scrape",
-      "url": "https://learn.umh.app/blog/",
-      "base_url": "https://learn.umh.app",
-      "link_filter": "/blog/"
-    },
-    {
       "name": "Tier0 Blog",
       "pillar": "Industrial IoT & Edge",
       "method": "sitemap",
-      "sitemap_url": "https://tier0.app/sitemap_en.xml",
+      "sitemap_url": "https://tier0.app/sitemap.xml",
       "path_filter": "/resource/blogs/"
     },
     {
@@ -364,10 +350,9 @@
     {
       "name": "Soda Blog",
       "pillar": "Data Governance & Quality",
-      "method": "scrape",
-      "url": "https://www.soda.io/blog",
-      "base_url": "https://www.soda.io",
-      "link_filter": "/blog/"
+      "method": "sitemap",
+      "sitemap_url": "https://www.soda.io/sitemap.xml",
+      "path_filter": "/blog/"
     },
     {
       "name": "DataHub Blog",
@@ -519,10 +504,9 @@
     {
       "name": "Celonis Blog",
       "pillar": "Process Intelligence & Workflow Orchestration",
-      "method": "scrape",
-      "url": "https://www.celonis.com/blog/",
-      "base_url": "https://www.celonis.com",
-      "link_filter": "/blog/"
+      "method": "sitemap",
+      "sitemap_url": "https://www.celonis.com/sitemap.xml",
+      "path_filter": "/blog/"
     },
     {
       "name": "Appian Blog",
@@ -535,10 +519,9 @@
     {
       "name": "ABBYY Blog",
       "pillar": "Process Intelligence & Workflow Orchestration",
-      "method": "scrape",
-      "url": "https://www.abbyy.com/blog/",
-      "base_url": "https://www.abbyy.com",
-      "link_filter": "/blog/"
+      "method": "sitemap",
+      "sitemap_url": "https://www.abbyy.com/sitemap.xml",
+      "path_filter": "/blog/"
     },
     {
       "name": "Nintex Blog",
@@ -815,26 +798,10 @@
       "feed_url": "https://aws.amazon.com/blogs/machine-learning/feed/"
     },
     {
-      "name": "DeepSeek News",
-      "pillar": "Trusted Agentic AI",
-      "method": "scrape",
-      "url": "https://api-docs.deepseek.com/news/",
-      "base_url": "https://api-docs.deepseek.com",
-      "link_filter": "/news/"
-    },
-    {
       "name": "EU AI Act Newsroom",
       "pillar": "Trusted Agentic AI",
       "method": "rss",
       "feed_url": "https://artificialintelligenceact.eu/feed/"
-    },
-    {
-      "name": "Meta AI Blog",
-      "pillar": "Trusted Agentic AI",
-      "method": "scrape",
-      "url": "https://ai.meta.com/blog/",
-      "base_url": "https://ai.meta.com",
-      "link_filter": "/blog/"
     },
     {
       "name": "Model Context Protocol Blog",
@@ -909,12 +876,6 @@
       "link_filter": "/blog/engineering/"
     },
     {
-      "name": "Matt Turck",
-      "pillar": "Enterprise Architecture & Practitioners",
-      "method": "rss",
-      "feed_url": "https://mattturck.com/feed/"
-    },
-    {
       "name": "Netflix TechBlog",
       "pillar": "Enterprise Architecture & Practitioners",
       "method": "rss",
@@ -952,14 +913,6 @@
       "pillar": "DACH, ERP & Analysts",
       "method": "rss",
       "feed_url": "https://www.heise.de/developer/rss/news-atom.xml"
-    },
-    {
-      "name": "VlexPlus News",
-      "pillar": "DACH, ERP & Analysts",
-      "method": "scrape",
-      "url": "https://www.vlexplus.com/",
-      "base_url": "https://www.vlexplus.com",
-      "link_filter": "/news"
     },
     {
       "name": "Orchestra Blog",
@@ -1098,18 +1051,6 @@
       "feed_url": "https://shopify.engineering/blog.atom"
     },
     {
-      "name": "Riot Games Tech Blog",
-      "pillar": "Enterprise Architecture & Practitioners",
-      "method": "rss",
-      "feed_url": "https://technology.riotgames.com/rss.xml"
-    },
-    {
-      "name": "Sky Betting & Gaming Technology",
-      "pillar": "Enterprise Architecture & Practitioners",
-      "method": "rss",
-      "feed_url": "https://sbg.technology/feed.xml"
-    },
-    {
       "name": "Unity Blog",
       "pillar": "Gaming",
       "method": "scrape",
@@ -1140,12 +1081,6 @@
       "rank": false
     },
     {
-      "name": "STACKIT Blog",
-      "pillar": "Sovereignty & Private Cloud",
-      "method": "rss",
-      "url": "https://www.stackit.de/en/blog/"
-    },
-    {
       "name": "OVHcloud Blog",
       "pillar": "Sovereignty & Private Cloud",
       "method": "rss",
@@ -1156,7 +1091,8 @@
       "name": "Scaleway Blog",
       "pillar": "Sovereignty & Private Cloud",
       "method": "rss",
-      "url": "https://www.scaleway.com/en/blog/"
+      "url": "https://www.scaleway.com/en/blog/",
+      "feed_url": "https://www.scaleway.com/en/blog/rss.xml"
     },
     {
       "name": "Nextcloud Blog",
@@ -1165,24 +1101,11 @@
       "url": "https://nextcloud.com/blog/"
     },
     {
-      "name": "Open Telekom Cloud Blog",
-      "pillar": "Sovereignty & Private Cloud",
-      "method": "rss",
-      "url": "https://open-telekom-cloud.com/en/blog"
-    },
-    {
       "name": "Red Hat Blog",
       "pillar": "Sovereignty & Private Cloud",
       "method": "rss",
       "url": "https://www.redhat.com/en/blog",
       "feed_url": "https://www.redhat.com/en/rss/blog"
-    },
-    {
-      "name": "SUSE Blog",
-      "pillar": "Sovereignty & Private Cloud",
-      "method": "rss",
-      "url": "https://www.suse.com/c/",
-      "feed_url": "https://www.suse.com/c/feed/"
     },
     {
       "name": "Canonical (Ubuntu) Blog",
@@ -1200,32 +1123,26 @@
     {
       "name": "Alation Blog",
       "pillar": "Data Governance & Quality",
-      "method": "rss",
-      "url": "https://www.alation.com/blog/"
-    },
-    {
-      "name": "Immuta Blog",
-      "pillar": "Data Governance & Quality",
-      "method": "rss",
-      "url": "https://www.immuta.com/blog/"
-    },
-    {
-      "name": "Rockwell Automation Blog",
-      "pillar": "Industrial IoT & Edge",
-      "method": "rss",
-      "url": "https://www.rockwellautomation.com/en-us/company/news/blogs.html"
+      "method": "scrape",
+      "url": "https://www.alation.com/blog/",
+      "base_url": "https://www.alation.com",
+      "link_filter": "/blog/"
     },
     {
       "name": "Cognite Blog",
       "pillar": "Industrial IoT & Edge",
-      "method": "rss",
-      "url": "https://www.cognite.com/en/blog"
+      "method": "scrape",
+      "url": "https://www.cognite.com/en/blog",
+      "base_url": "https://www.cognite.com",
+      "link_filter": "/resources/blog/"
     },
     {
       "name": "Tulip Blog",
       "pillar": "Industrial IoT & Edge",
-      "method": "rss",
-      "url": "https://tulip.co/blog/"
+      "method": "scrape",
+      "url": "https://tulip.co/blog/",
+      "base_url": "https://tulip.co",
+      "link_filter": "/blog/"
     },
     {
       "name": "Ethan Mollick (One Useful Thing)",
@@ -1265,8 +1182,10 @@
     {
       "name": "Groq Blog",
       "pillar": "Trusted Agentic AI",
-      "method": "rss",
-      "url": "https://groq.com/blog"
+      "method": "scrape",
+      "url": "https://groq.com/blog",
+      "base_url": "https://groq.com",
+      "link_filter": "/blog/"
     },
     {
       "name": "CrewAI Blog",
@@ -1278,13 +1197,8 @@
       "name": "Weights & Biases (Fully Connected)",
       "pillar": "Trusted Agentic AI",
       "method": "rss",
-      "url": "https://wandb.ai/fully-connected"
-    },
-    {
-      "name": "Constellation Research (Holger Mueller)",
-      "pillar": "Enterprise Architecture & Practitioners",
-      "method": "rss",
-      "url": "https://www.constellationr.com/blog-news"
+      "url": "https://wandb.ai/fully-connected",
+      "feed_url": "https://wandb.ai/fully-connected/rss.xml"
     },
     {
       "name": "Sam Newman",
@@ -1299,12 +1213,6 @@
       "url": "https://db.cs.cmu.edu/news/"
     },
     {
-      "name": "United Manufacturing Hub",
-      "pillar": "Industrial IoT & Edge",
-      "method": "rss",
-      "url": "https://learn.umh.app/blog/"
-    },
-    {
       "name": "IIoT World",
       "pillar": "Industrial IoT & Edge",
       "method": "rss",
@@ -1312,6 +1220,26 @@
     }
   ],
   "parked_sources": [
+    {
+      "name": "Constellation Research (Holger Mueller)",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "url": "https://www.constellationr.com/blog-news",
+      "parked_on": "2026-11-18",
+      "parked_reason": "Answers 403 to the digest's requests (bot protection) and hung the run in production.",
+      "parked_fix": "Health check reports it as recovered once the block lifts."
+    },
+    {
+      "name": "DeepSeek News",
+      "pillar": "Trusted Agentic AI",
+      "method": "scrape",
+      "url": "https://api-docs.deepseek.com/news/",
+      "base_url": "https://api-docs.deepseek.com",
+      "link_filter": "/news/",
+      "parked_on": "2026-11-18",
+      "parked_reason": "Docs site renders the news list client-side; the sitemap has no /news/ entries.",
+      "parked_fix": "Watch the DeepSeek GitHub releases feed instead."
+    },
     {
       "name": "EnvisionSCADA (Knowledge Base)",
       "pillar": "Industrial IoT & Edge",
@@ -1325,6 +1253,81 @@
       "parked_fix": "Needs a headless browser, or find a Substack/Medium/Ghost mirror."
     },
     {
+      "name": "Immuta Blog",
+      "pillar": "Data Governance & Quality",
+      "method": "rss",
+      "url": "https://www.immuta.com/blog/",
+      "parked_on": "2026-11-18",
+      "parked_reason": "Renders client-side, no feed, no usable sitemap. Never delivered a post.",
+      "parked_fix": "Look for a newsletter feed or a sitemap that lists /blog/ URLs."
+    },
+    {
+      "name": "Matt Turck",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://mattturck.com/feed/",
+      "parked_on": "2026-11-18",
+      "parked_reason": "Site moved off WordPress: /feed/ returns the HTML app. The Substack feed exists but is empty.",
+      "parked_fix": "Re-check mattturck.com for a feed after the relaunch."
+    },
+    {
+      "name": "Meta AI Blog",
+      "pillar": "Trusted Agentic AI",
+      "method": "scrape",
+      "url": "https://ai.meta.com/blog/",
+      "base_url": "https://ai.meta.com",
+      "link_filter": "/blog/",
+      "parked_on": "2026-11-18",
+      "parked_reason": "ai.meta.com answers 400 to non-browser requests. Never delivered a post.",
+      "parked_fix": "Candidate replacement: https://engineering.fb.com/category/ai-research/feed/ (works, 9 entries)."
+    },
+    {
+      "name": "Open Telekom Cloud Blog",
+      "pillar": "Sovereignty & Private Cloud",
+      "method": "rss",
+      "url": "https://open-telekom-cloud.com/en/blog",
+      "parked_on": "2026-11-18",
+      "parked_reason": "Renders client-side, no feed, no usable sitemap. Never delivered a post.",
+      "parked_fix": "Look for a feed on the German site or a sitemap with /en/blog/."
+    },
+    {
+      "name": "Riot Games Tech Blog",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://technology.riotgames.com/rss.xml",
+      "parked_on": "2026-11-18",
+      "parked_reason": "rss.xml times out (504) or hangs. Never delivered a post.",
+      "parked_fix": "Re-check technology.riotgames.com/rss.xml."
+    },
+    {
+      "name": "Rockwell Automation Blog",
+      "pillar": "Industrial IoT & Edge",
+      "method": "rss",
+      "url": "https://www.rockwellautomation.com/en-us/company/news/blogs.html",
+      "parked_on": "2026-11-18",
+      "parked_reason": "Answers 403 to the digest's requests (bot protection) and hung the run in production. No feed either.",
+      "parked_fix": "Drop unless Rockwell offers a feed."
+    },
+    {
+      "name": "STACKIT Blog",
+      "pillar": "Sovereignty & Private Cloud",
+      "method": "rss",
+      "url": "https://www.stackit.de/en/blog/",
+      "parked_on": "2026-11-18",
+      "parked_reason": "Renders client-side, no feed, no usable sitemap. Never delivered a post. Every feed path returns the blog HTML.",
+      "parked_fix": "Check whether STACKIT publishes posts on LinkedIn or Medium with a feed."
+    },
+    {
+      "name": "SUSE Blog",
+      "pillar": "Sovereignty & Private Cloud",
+      "method": "rss",
+      "url": "https://www.suse.com/c/",
+      "feed_url": "https://www.suse.com/c/feed/",
+      "parked_on": "2026-11-18",
+      "parked_reason": "Feed /c/feed/ returns 404 since early October; the blog declares no feed and has no sitemap.",
+      "parked_fix": "Check suse.com for a new feed URL."
+    },
+    {
       "name": "ServiceNow Blog",
       "pillar": "Process Intelligence & Workflow Orchestration",
       "method": "scrape",
@@ -1335,6 +1338,44 @@
       "parked_on": "2026-08-26",
       "parked_reason": "No data within its own 45s budget. Same hang pattern, single socket. Failing in the digest for weeks.",
       "parked_fix": "Check for an RSS feed or sitemap.xml on servicenow.com, or drop."
+    },
+    {
+      "name": "Sky Betting & Gaming Technology",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://sbg.technology/feed.xml",
+      "parked_on": "2026-11-18",
+      "parked_reason": "Domain serves the same page for every URL, feed.xml included. Blog looks discontinued.",
+      "parked_fix": "Drop."
+    },
+    {
+      "name": "The New Stack",
+      "pillar": "Enterprise Architecture & Practitioners",
+      "method": "rss",
+      "feed_url": "https://thenewstack.io/feed/",
+      "parked_on": "2026-11-18",
+      "parked_reason": "Answers 403 to the digest's requests (bot protection) and hung the run in production. Delivered fine until early November.",
+      "parked_fix": "Health check reports it as recovered once the block lifts."
+    },
+    {
+      "name": "United Manufacturing Hub",
+      "pillar": "Industrial IoT & Edge",
+      "method": "rss",
+      "url": "https://learn.umh.app/blog/",
+      "parked_on": "2026-11-18",
+      "parked_reason": "Renders client-side, no feed, no usable sitemap. Never delivered a post.",
+      "parked_fix": "Check for a Ghost or Docusaurus feed if the site is rebuilt."
+    },
+    {
+      "name": "VlexPlus News",
+      "pillar": "DACH, ERP & Analysts",
+      "method": "scrape",
+      "url": "https://www.vlexplus.com/",
+      "base_url": "https://www.vlexplus.com",
+      "link_filter": "/news",
+      "parked_on": "2026-11-18",
+      "parked_reason": "No article links and no feed on the site. Never delivered a post.",
+      "parked_fix": "Drop unless a news feed appears."
     }
   ]
 }
